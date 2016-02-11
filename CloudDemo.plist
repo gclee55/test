@@ -17,13 +17,13 @@
             <key>metadata</key>
             <dict>
                 <key>bundle-identifier</key>
-                <string>com.skt.TWorld</string>
+                <string>com.sktelecom.cloud</string>
                 <key>bundle-version</key>
                 <string>1.0</string>
                 <key>kind</key>
                 <string>software</string>
                 <key>title</key>
-                <string>Wireless AdHoc TWorld</string>
+                <string>Wireless AdHoc Cloud</string>
             </dict>
         </dict>
     </array>
