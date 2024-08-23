@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="ko">
+	<head>
+		<meta charset="UTF-8" />
+		
+		<meta property="og:title" content="T 우주패스 DIY" />
+		<meta property="og:type" content="website" />
+		<meta property="og:description" content="DIY 기본 상품 택 2 + 추가 상품 1~2개 더" />
+		<meta property="og:image" content="https://stg-cdn.sktuniverse.co.kr/FOBO/PRD/PRDDSP/20240509/img-thumb-pass-diy-gK1CSJALTA9YNNg.png?curDate=20240821151633" />
+		<meta property="og:site_name" content="T 우주" />
+		<meta property="og:url" content="nflx-m.sktuniverse.co.kr"/>
+		
+		<title>Sample</title>
+		<style>
+			div {
+				width: 100%;
+				height: 100%;
+			}
+			
+			button {
+				font-size: 50px;
+				width: 100%;
+				height: 100%;
+				margin-top: 15px;
+				padding: 6px;
+			}
+			
+			label {
+				font-size: 40px;
+				width: 100%;
+				height: 100%;
+				position: relative;
+			}
+			
+			.default_btn {
+				display: block;
+			}
+			
+			input[type="radio"] {
+				width:40px;
+				height:40px;
+			}
+			
+			input[type="radio"] + label {
+				font-size: 40px;
+				margin-left: 15px;
+				margin-right: 15px;
+			}
+
+			input[type="date"] {
+				font-size: 40px;
+				width: 500px;
+				height: 60px;
+				vertical-align: middle;
+				margin-top: -10px;
+			}
+			
+			input[type="text"] {
+				font-size: 40px;
+				width: 500px;
+				height: 40px;
+			}
+			
+			div[class$="Result"] {
+				font-size: 40px;
+			}
+			
+			h3 {
+				font-size: 40px;
+				margin-bottom: 0px;
+			}
+			
+			header {
+				font-size: 45px;
+				font-weight: bold;
+				margin-left: 15px;
+				margin-right: 15px;
+				height: 100px;
+			}
+			
+			footer {
+				font-size: 40px;
+				margin-left: 15px;
+				margin-right: 15px;
+				height: 100px;
+			}
+			
+			.commonJsResult {
+				word-wrap: break-word;
+			}
+			
+			.sessionStatusJsResult {
+				word-wrap: break-word;
+			}
+			
+			.getPhotoResult {
+				word-wrap: break-word;
+			}
+			
+			.form-group {
+				margin-top: 30px;
+			}
+		</style>
+	</head>
+	<body>
+		
+		<!-- 공통 JS -->
+		<script>
+			document.addEventListener('DOMContentLoaded', function() {
+				// 파일 업로드
+				// index가 0에서 2까지 반복
+				for (var index = 0; index <= 2; index++) {
+					// 각 index에 대해 이벤트 리스너를 추가
+					var inputFile = document.getElementById('inputFile' + index);
+					if (inputFile) {
+						inputFile.addEventListener('change', function(event) {
+							var file = event.target.files[0];
+							if (file) {
+								var reader = new FileReader();
+								reader.onload = function(e) {
+									var img = document.getElementById('base64Image');
+									img.src = e.target.result;
+								};
+								reader.readAsDataURL(file);
+							}
+						});
+					}
+				}
+			});
+			
+			
+			function queryStringFromParams(params) {
+				var url = 'tuniverse://' + params['command'] + '?p=' + encodeURIComponent(JSON.stringify(params));
+				console.log(url);
+				return url;
+			}
+			
+			function executeCommand(params) {
+				if (window.webkit) {
+					window.webkit.messageHandlers.tuniverse.postMessage(JSON.stringify(params));
+				} else if (window.tuniverse) {
+					window.tuniverse.postMessage(JSON.stringify(params))
+				} else {
+					window.location.href = queryStringFromParams(params);
+				}
+			}
+			
+			function testCall(command, params, callback) {
+				var params1 = {
+					command: command,
+					params: params,
+					callback: callback
+				}
+				executeCommand(params1)
+			}
+			
+			// command 만 넣어서 브릿지 API 호출
+			function simpleTestCall(command) {
+				testCall(command, {}, 'onConsoleLogCallback')
+			}
+			
+			// callback 을 받으면 지정된 className 에 결과값을 출력
+			function printTestCall(command, params, className) {
+				classNameToPrint = className
+				testCall(command, params, 'onPrintCallback')
+			}
+			
+			function onConsoleLogCallback(result) {
+				console.log('result: ' + JSON.stringify(result));
+			}
+			
+			function onAlertCallback(result) {
+				var params = result['params']
+				alert('result: ' + JSON.stringify(result));
+			}
+			
+			var classNameToPrint = ''
+			function onPrintCallback(result) {
+				if (classNameToPrint == '') {
+					classNameToPrint = '.commonJsResult'
+				}
+				console.log(result);
+				document.querySelector(classNameToPrint).innerHTML = JSON.stringify(result);
+			}
+			
+			function onPrintImageCallback(result) {
+				document.querySelector('.getPhotoResult').innerHTML = JSON.stringify("photoName: " + result['photoName']);
+				if (result['photoImage'] != null) {
+					displayImage(result['photoImage']);
+				}
+			}
+			
+			var classNameToSessionPrint = ''
+			function onPrintSessionCallback(result) {
+				if (classNameToSessionPrint == '') {
+					classNameToSessionPrint = '.sessionStatusJsResult'
+				}
+				console.log(result);
+				document.querySelector(classNameToSessionPrint).innerHTML = JSON.stringify(result);
+			}
+			
+			let count = 0
+			function checkSession() {
+				classNameToPrint = '.commonJsResult'
+				onPrintCallback('session check complete: check count=' + count++)
+			}
+			
+			function showAlert(content) {
+				alert(content)
+			}
+			
+			function showConfirm(content) {
+				if (confirm(content)) {
+					alert('user confirmed')
+				} else {
+					alert('user canceled')
+				}
+			}
+			
+			function getSelectedLoginType() {
+				const radios = document.getElementsByName('loginType');
+				for (let i = 0; i < radios.length; i++) {
+					if (radios[i].checked) {
+						return parseInt(radios[i].value, 10);
+					}
+				}
+			}
+			
+			function displayImage(base64Data) {
+				var image = document.getElementById('base64Image')
+				image.src = 'data:image/jpeg;base64,' + base64Data;
+			}
+			
+		</script>
+		
+		<header>
+			<p>웹뷰 브릿지 API 테스트</p>
+		</header>
+		
+		<!-- 공통 JS 여기까지 -->
+		
+		<div class="commonJsResult"></div>
+		
+		<h3>브릿지 API</h3>
+		<!-- 앱 버전 -->
+		<button onclick="printTestCall('getAppVersion', {}, '.getAppVersionResult')">앱 버전 조회</button>
+		<div class="getAppVersionResult"></div>
+		
+		<!-- 앱 종료 -->
+		<button onclick="simpleTestCall('newVC')">새로운 뷰 컨트롤러</button>
+		<!-- 앱 종료 -->
+		<button onclick="simpleTestCall('exitApp')">앱(뷰 컨트롤러) 종료</button>
+		
+		<!-- 캐시 삭제 -->
+		<button onclick="testCall('clearCache', {}, 'onPrintCallback')">캐시 제거</button>
+		
+		<!-- User-Agent -->
+		<button onclick="document.querySelector('.userAgentResult').innerHTML = navigator.userAgent;">User Agent</button>
+		<div class="userAgentResult"></div>
+		
+		<!-- status bar 색상 -->
+		<button onclick="testCall('statuBarColor', {argb: 0xffff0000}, '.onPrintCallback')">붉은 색 status bar</button>
+
+		<!-- status bar 색상 -->
+		<button onclick="testCall('statuBarColor', {argb: 0xff0000ff}, '.onPrintCallback')">파란 색 status bar</button>
+
+		<!-- status bar 색상 -->
+		<button onclick="testCall('statuBarColor', {argb: 0xffffffff}, '.onPrintCallback')">흰 색 status bar</button>
+
+		<!-- URI scheme 호출 -->
+		<!--		<button onclick="window.location.href='tuniverse://onelink/eventpage?targetUrl=https%3A%2F%2Fwww.google.com'">이벤트 페이지 이동(구글)</button>-->
+		<button onclick="simpleTestCall('callEventPage')">이벤트 페이지 호출</button>
+		
+		<!-- 푸시 토큰 -->
+		<button onclick="printTestCall('openUrl', {targetUrl: 'https://naver.com'}, '.getPushTokenResult')">외부 브라우저 열기</button>
+		<div class="getPushTokenResult"></div>
+		
+		<!-- 푸시 토큰 -->
+		<button onclick="printTestCall('getPushToken', {}, '.getPushTokenResult')">푸시 토큰 조회</button>
+		<div class="getPushTokenResult"></div>
+		
+		<!-- 디바이스 아이디 조회 -->
+		<button onclick="printTestCall('getDeviceId', {}, '.getDeviceIdResult')">디바이스 아이디 조회</button>
+		<div class="getDeviceIdResult"></div>
+		
+		<!-- 주소록 확인 -->
+		<button onclick="printTestCall('getContact', {}, '.getContactResult')">주소록 호출</button>
+		<div class="getContactResult"></div>
+		
+		<!-- 앱 설정으로 이동 -->
+		<button onclick="printTestCall('moveAppSettings', {}, '.moveAppSettingsResult')">앱 설정으로 이동</button>
+		<div class="moveAppSettingsResult"></div>
+		
+		<!-- 스토어로 이동 -->
+		<button onclick="printTestCall('moveStore', {}, '.moveStoreResult')">스토어로 이동</button>
+		<div class="moveStoreResult"></div>
+		
+		<!-- 사진 첨부 -->
+		<button onclick="testCall('getPhoto', {}, 'onPrintImageCallback')">사진 첨부</button>
+		<div class="getPhotoResult"></div>
+		<img id="base64Image" src="" />
+		
+		<!-- 공유하기 -->
+		<button onclick="printTestCall('shareContent', {sharedText: 'https://starbuckskr.page.link/3pbfxZqRRPEQ54tJ9'}, '.shareContentResult')">공유 하기</button>
+		<div class="shareContentResult"></div>
+		
+		<!-- 권한 안내 팝업 확인 여부 조회 -->
+		<button onclick="printTestCall('isPermissionConfirmed', {}, '.isPermissionConfirmedResult')">권한 안내 팝업 확인 여부 조회</button>
+		<div class="isPermissionConfirmedResult"></div>
+		
+		<!-- 권한 안내 팝업 노출(다음 앱 실행 시) -->
+		<button onclick="simpleTestCall('setPermissionConfirmedFalse')">권한 안내 팝업 노출(다음 앱 실행 시)</button>
+		
+		<!-- 권한 안내 팝업 확인 -->
+		<button onclick="printTestCall('permissionConfirmed', {}, '.permissionConfirmedResult')">권한 안내 팝업 확인</button>
+		<div class="permissionConfirmedResult"></div>
+		
+		<h3>로그인 / 로그아웃 / 세션만료</h3>
+		<div>
+			<h1> 로그인 타입 </h1>
+			<input type="radio" id="loginTypeTid" name="loginType" value=0 checked="checked" /><label for="loginTypeTid">T아이디</label>
+			<input type="radio" id="loginTypeKakao" name="loginType" value=1 /><label for="loginTypeKakao">카카오</label>
+			<input type="radio" id="loginTypeNaver" name="loginType" value=2 /><label for="loginTypeNaver">네이버</label>
+			<input type="radio" id="loginTypeApple" name="loginType" value=3 /><label for="loginTypeApple">애플</label>
+			<input type="radio" id="loginTypeGoogle" name="loginType" value=4 /><label for="loginTypeGoogle">구글</label>
+		</div>
+		<br>
+		<div class="sessionStatusJsResult"></div>
+		<!-- 로그인 요청 -->
+		<button onclick="testCall('login', {loginType: getSelectedLoginType()}, 'onPrintSessionCallback')">로그인 요청</button>
+		<!-- 로그아웃 -->
+		<button onclick="testCall('logout', {loginType: getSelectedLoginType()}, 'onPrintSessionCallback')">로그아웃 요청</button>
+		<!-- 연결끊기 -->
+		<button onclick="testCall('disconnectSnsLogin', {loginType: getSelectedLoginType()}, 'onPrintSessionCallback')">연결끊기 요청</button>
+		<!-- 세션 상태 변경(로그인) -->
+		<button onclick="testCall('sessionStatus', {status: 0, loginType: getSelectedLoginType(), userId: 'gclee55', accessToken: 'access token'}, 'onPrintSessionCallback')">로그인 완료(T아이디)</button>
+		<!-- 세션 상태 변경(로그아웃) -->
+		<button onclick="testCall('sessionStatus', {status: 1, loginType: getSelectedLoginType(), userId: 'gclee55', accessToken: 'access token'}, 'onPrintSessionCallback')">로그아웃 완료(T아이디)</button>
+		<!-- 세션 상태 변경(로그아웃) -->
+		<button onclick="testCall('sessionStatus', {status: 2, loginType: getSelectedLoginType(), userId: 'gclee55', accessToken: 'access token'}, 'onPrintSessionCallback')">세션만료(T아이디)</button>
+		<!-- 자동로그인 -->
+		<button onclick="testCall('autoLogin', {loginType: getSelectedLoginType()}, 'onPrintSessionCallback')">### deprecated: 자동로그인 ###</button>
+		
+		<h3>타 앱 호출</h3>
+		<!-- 전화걸기 -->
+		<button onclick="window.location.href='tel:01032724120'">전화걸기</button>
+		<!-- SMS -->
+		<button onclick="window.location.href='sms:01032724120'">SMS 문자</button>
+		<!-- 구글 페이지 로딩 -->
+		<button onclick="window.location.href='https://google.com'">구글</button>
+		<!-- 이메일 -->
+		<button onclick="window.location.href='mailto:gangcheon.lee@dayside.co.kr'">이메일</button>
+		<!-- T멤버십 호출 -->
+		<button onclick="simpleTestCall('callTmembership')">T멤버십 앱 호출</button>
+		<!-- T월드 호출 -->
+		<button onclick="simpleTestCall('callTworld')">T월드 앱 호출</button>
+		
+		<h3>Alert</h3>
+		<!-- Alert -->
+		<button onclick="showAlert('여러가지 알립니다.\n여러가지 알립니다.\n여러가지 알립니다.\n여러가지 알립니다.\n여러가지 알립니다.\n여러가지 알립니다.\n여러가지 알립니다.\n여러가지 알립니다.\n여러가지 알립니다.\n여러가지 알립니다.\n여러가지 알립니다.\n여러가지 알립니다.\n여러가지 알립니다.\n여러가지 알립니다.\n여러가지 알립니다.\n여러가지 알립니다.\n여러가지 알립니다.\n여러가지 알립니다.\n여러가지 알립니다.\n여러가지 알립니다.\n여러가지 알립니다.\n여러가지 알립니다.\n여러가지 알립니다.\n여러가지 알립니다.\n여러가지 알립니다.\n여러가지 알립니다.\n여러가지 알립니다.\n여러가지 알립니다.\n여러가지 알립니다.\n여러가지 알립니다.\n여러가지 알립니다.\n여러가지 알립니다.\n여러가지 알립니다.\n여러가지 알립니다.\n여러가지 알립니다.\n여러가지 알립니다.\n여러가지 알립니다.\n여러가지 알립니다.\n여러가지 알립니다.\n여러가지 알립니다.\n여러가지 알립니다.\n여러가지 알립니다.\n여러가지 알립니다.\n여러가지 알립니다.\n여러가지 알립니다.\n여러가지 알립니다.\n여러가지 알립니다.\n여러가지 알립니다.\n')">Alert 테스트</button>
+		<!-- Confirm -->
+		<button onclick="showConfirm('두개의 버튼 중 하나를 선택하세요.')">Confirm 테스트</button>
+		
+		<h3>input 태그</h3>
+		<!-- 숨겨진 파일 입력 필드 -->
+		<div>
+			<input type="file" name="upload[]" id="inputFile0" style="display: none;"/>
+			<input type="file" name="upload[]" id="inputFile1" accept="image/*" style="display: none;" />
+			<input type="file" name="upload[]" id="inputFile2" accept=".txt" style="display: none;" />
+		</div>
+		<div class="form-group">
+			<label for="datePicker">날짜를 선택하세요:</label>
+			<input type="date" id="datePicker"/>
+		</div>
+		<div class="form-group">
+			<label for="textInput">텍스트를 입력하세요:</label>
+			<input type="text" id="textInput"/>
+		</div>
+
+		
+		<!-- 사용자 정의 버튼 -->
+		<button onclick="document.getElementById('inputFile0').click()">파일 선택</button>
+		<button onclick="document.getElementById('inputFile1').click()">이미지 파일 선택</button>
+		<button onclick="document.getElementById('inputFile2').click()">텍스트 파일 선택</button>
+		<!-- 권한 체크 -->
+		<button onclick="printTestCall('getCameraPermission', {}, '.getPermissionResult')">카메라 권한 체크</button>
+		<div class="getPermissionResult"></div>
+		<!-- 권한 요청 -->
+		<button onclick="printTestCall('requestCameraPermission', {}, '.requestPermissionResult')">카메라 권한 요청</button>
+		<div class="requestPermissionResult"></div>
+
+		<h3>헤더</h3>
+		<!-- 헤더 노출 -->
+		<button onclick="printTestCall('showHeader', {title: '네이버 이동', backUrl: 'https://search.naver.com/search.naver?where=nexearch&sm=top_hty&fbm=0&ie=utf8&query=한글포함'}, '.showHeaderResult')">헤더(네이버 이동)</button>
+		<button onclick="printTestCall('showHeader', {title: '히스토리 백'}, '.showHeaderResult')">헤더(히스토리 백)</button>
+		<!-- 헤더 감추기 -->
+		<button onclick="printTestCall('hideHeader', {}, '.showHeaderResult')">헤더 감추기</button>
+		<div class="showHeaderResult"></div>
+
+		<h3>이벤트 기록(앱스플라이어)</h3>
+		<!-- 이벤트 기록 요청 -->
+		<button onclick="testCall('recordEvent', {eventLogName: 'af_name', eventLogValue: JSON.stringify({af_revenue: 6.72, af_content_type: ['wallets', 'oneMore', 3], af_content_id: '15854'})}, 'onPrintSessionCallback')">로그인 요청</button>
+
+		<footer>
+			<p>여기까지</p>
+		</footer>
+	</body>
+</html>
+
