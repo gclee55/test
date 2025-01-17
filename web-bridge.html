@@ -233,6 +233,2381 @@
 			
 		</script>
 		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script id="divArea2-template" type="text/x-handlebars-template">
+{{#ifCond 'A01,A02,D01' 'notIndexOf' data.prodDetail.prdType}}
+    {{#with data.prodDetail as |pd|}}        
+        <div class="card-product {{#ifCond 'D02,D03' 'notIndexOf' pd.prdType}}card-product-basic-more{{else}}card-product-group{{/ifCond}}">
+            <div class="main-txt-title"> 
+                <div class="txt-title">
+                    {{#ifCond 'B04,B05,C01,C05' 'indexOf' pd.prdType}}
+                        한 번에 모두<br/>
+                        구독할 수 있어요
+                    {{else ifCond 'B03,C02,C03,C04,C06,C07,C08' 'indexOf' pd.prdType}}
+                        구독할 상품을<br/>
+                        선택해 주세요
+                    {{else ifCond 'B02' 'indexOf' pd.prdType}}
+                        함께 이용할 혜택을<br/>
+                        선택해주세요
+                    {{else ifCond 'D02,D03' 'indexOf' pd.prdType}}                            
+                        신청할 상품 1개를<br/>
+                        선택해 주세요 
+                    {{/ifCond}}
+                </div>
+            </div>
+            <div class="com-product-container">
+                <div class="com-product-wrap {{#ifCond 'D02,D03' 'notIndexOf' pd.prdType}}no-gap{{/ifCond}}">
+                    <!-- 기본상품 영역-->
+                    {{#with pd.compPrd.slotList as |sl|}}
+                        {{#if sl.pList}}
+                            <div class="product-title {{ifCondReturn 'B02' '===' pd.prdType 'no-icon-wrap' ''}}">
+                                <div class="txt-title">
+                                    <div class="txt">{{renderHTML pd.prdTxt}}</div>
+                                    <span class="txt-sub tooltip-container tooltip-white">
+                                        <span class="inner">
+                                            <span>{{sl.selectCntText}}</span>
+                                        </span>
+                                        <span class="ico ico-info-stroke tooltip-btn" id="compToolTip" style="display:none"></span>
+                                        <div class="tooltip">
+                                            <span class="tooltip-inner">
+                                                {{sl.basBnfPrdCnt}}개까지 기본 선택이며, 더 고르실 경우 추가되는 상품마다 추가 요금 {{currencyComma sl.addStrdAmt}}원이 발생합니다.
+                                            </span>
+                                        </div>
+                                    </span>
+                                </div>
+                            </div>
+
+                            {{#ifCond 'B02' 'notIndexOf' pd.prdType}}
+                                <div class="col thumb-col">                                        
+                                    {{#each sl.pList as |pl|}}
+                                        <div class="com-product-thumb-hor-1">
+                                            <span class="thumb-product thumb-product-xs">
+                                                <span class="thumb-product-img">
+                                                    <img loading="lazy" width="100" height="100" src="{{getApiCdn pl.img}}" alt="{{pl.bnfDesc}}" />
+                                                </span>
+                                                <span class="badge-product-num-2">{{ifCondReturn 'B03,C02,C04,C06,C08,D02,D03' 'indexOf' pd.prdType '옵션' '구성'}} {{math @index '+' 1}}</span>
+                                            </span>
+                                            <span class="info-product-hor">
+                                                <span class="txt-name">{{renderHTML pl.bnfDesc}}</span>
+                                                <span class="txt-price">
+                                                    {{#ifCond 'B03,B04,B05' 'indexOf' pd.prdType}}                                                        
+                                                        {{#ifCond pl.fstScbDcYn '===' 'Y'}}
+                                                            <span class="txt-string-blue">첫 구독</span>
+                                                            <span class="txt-price-sale">{{currencyComma pl.fstScbDcPrc}}원</span>
+                                                        {{else}}
+                                                            <span class="txt-price-sale">{{currencyComma pl.amt}}원</span>
+                                                        {{/ifCond}}
+                                                        {{#if pl.scbPayTrm}}
+                                                            <span class="txt-period">/ {{pl.scbPayTrm}}</span>
+                                                        {{/if}}                                                            
+                                                    {{else}}
+                                                        {{#ifCond '03,04' 'indexOf' sl.bnfTyp}}
+                                                            {{#ifCond '0' '===' pl.addBillAmt}}
+                                                                <span class="txt-price-sale gray">+{{pl.addBillAmt}}원</span>
+                                                            {{else}}
+                                                                {{#ifCond pd.prdType '===' 'D03'}}
+                                                                <span class="txt-price-sale">{{currencyComma pl.amt}}원</span>                                                                    
+                                                                {{else}}   
+                                                                <span class="txt-price-sale">+{{currencyComma pl.addBillAmt}}원</span>
+                                                                {{/ifCond}} 
+                                                            {{/ifCond}}
+                                                        {{/ifCond}}
+                                                    {{/ifCond}}
+                                                </span>
+                                            </span>
+                                            {{#ifCond 'B03,D02,D03' 'indexOf' pd.prdType}}
+                                                <button class="btn-size btn-small bg-stroke" id="product-detail-gp1SelectBtn-{{pl.compPrdId}}" value="{{pl.compPrdId}}">
+                                                    <span>선택</span>
+                                                </button>
+                                            {{/ifCond}}
+                                            <a href="/product/detail/slot?prdId={{pl.compPrdId}}" class="inner-link"></a>
+                                        </div>
+                                    {{/each}}
+                                </div>
+                                {{#ifCond 'D02,D03' 'indexOf' pd.prdType}}
+                                    {{#ifCond  sl.pList.length '>' 3}}
+                                    <a class="btn-txt-arrow btn-all" id="gotoAllBtn">
+                                        <span class="row">
+                                            <span>전체 보기</span>
+                                            <span class="ico ico-arrow-small right"></span>
+                                        </span>
+                                    </a>                                    
+                                    {{/ifCond}}
+                                {{/ifCond}}
+                            {{/ifCond}}
+
+                        {{/if}}
+                    {{/with}}
+                    <!--// 기본상품 영역-->
+
+                    <!--  추가상품 영역-->
+                    {{#with pd.compPrd.addSlotList as |asl|}}
+                        {{#if asl}}
+                            <!-- (N개 표기)-->
+                            {{#ifCond 'C03,C04' 'indexOf' pd.prdType}}
+                                <div class="plus-bg">
+                                    <img loading="lazy" width="100" height="100" src="https://stg-cdn.sktuniverse.co.kr/m/image/details/img-div-more.png" alt="">
+                                </div>
+                                <div class="product-title">
+                                    <div class="txt-title">
+                                        <div class="txt">추가 상품</div>
+                                        <span class="txt-sub tooltip-container tooltip-white">
+                                            <span class="inner">
+                                                {{asl.selectCntText}}                                                                                                   
+                                            </span>
+                                            {{#xif asl "asl.bnfTyp === '04' && asl.basBnfPrdCnt > '0'"}}                                                    
+                                                <span class="ico ico-info-stroke tooltip-btn"></span>
+                                                <div class="tooltip">
+                                                    <span class="tooltip-inner">
+                                                        {{asl.basBnfPrdCnt}}개까지 기본 선택이며, 더 고르실 경우 추가되는 상품마다 추가 요금 {{currencyComma asl.addStrdAmt}}원이 발생합니다.
+                                                    </span>
+                                                </div>                                                    
+                                            {{/xif}}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="product-wrap-inner ico-num-wrap">
+                                    <div class="con-ico-num">
+                                        <div class="row">
+                                            <div class="list-ico row">
+                                                {{#each asl.pList as |pl|}}
+                                                    <span class="tmp-logo-img">
+                                                            <img loading="lazy" width="100" height="100" src="{{getApiCdn pl.brandImg}}" alt="">
+                                                        </span>
+                                                {{/each}}
+                                            </div>
+                                            <button class="btn-med-ico">
+                                                <!-- <span class="ico ico-plus white"></span> -->
+                                                <span>+ {{pd.compPrd.addSlotListCnt}}개</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            {{/ifCond}}
+                            <!--// (N개 표기)-->
+
+                            <!-- (N개 표기 X)-->
+                            {{#ifCond 'C05,C06,C07,C08' 'indexOf' pd.prdType}}                                    
+                                <div class="plus-bg">
+                                    <img loading="lazy" width="100" height="100" src="https://stg-cdn.sktuniverse.co.kr/m/image/details/img-div-more.png" alt="">
+                                </div>
+                                <div class="product-title">
+                                    <div class="txt-title">
+                                        <div class="txt">추가 상품</div>
+                                        <span class="txt-sub tooltip-container tooltip-white">
+                                            <span class="inner">
+                                                <span>기본 상품과 함께 구독할 수 있어요</span>
+                                            </span>
+                                            <span class="ico ico-info-stroke tooltip-btn" id="toolTip" style="display:none"></span>
+                                            <div class="tooltip">
+                                                <span class="tooltip-inner">{{asl.basBnfPrdCnt}}개까지 기본 선택이며, 추가 선택 시 {{currencyComma asl.addStrdAmt}}원이 추가됩니다.</span>
+                                            </div>                                                    
+                                        </span>
+                                    </div>
+                                </div>
+                                {{#each asl.pList as |pl|}}
+                                    <div class="col thumb-col">
+                                        <div class="com-product-thumb-hor-1">
+                                            <span class="thumb-product thumb-product-xs">
+                                                <span class="thumb-product-img">
+                                                    <img loading="lazy" width="100" height="100" src="{{getApiCdn pl.img}}" alt="{{pl.bnfDesc}}">
+                                                </span>
+                                            </span>
+                                            <span class="info-product-hor">
+                                                <span class="txt-name">{{pl.bnfDesc}}</span>
+                                            </span>
+                                            <a href="/product/detail/slot?prdId={{pl.compPrdId}}" class="inner-link"></a>
+                                        </div>
+                                    </div>
+                                {{/each}}                                    
+                            {{/ifCond}}
+                            <!--// (N개 표기 X)-->
+                        {{/if}}
+                    {{/with}}
+                    <!--// 추가상품 영역-->
+
+                    <!-- 추천 상품 영역-->
+                    {{#ifCond 'B01,B02,C03,C04' 'indexOf' pd.prdType}}                            
+                        <div class="cut-bg" style="display:none">
+                            <img loading="lazy" width="100" height="100" src="https://stg-cdn.sktuniverse.co.kr/m/image/details/img-tap.png" alt="">
+                        </div>
+                        <div class="product-wrap-inner ai-pick" id="aiPickTtlNm" style="display:none">
+                            <div class="row row-ai">
+                                <span class="ico ico-ai"></span>
+                                <span class="row txt-sub">
+                                    <span>고객님께 추천하는 상품</span>
+                                </span>
+                            </div>
+                            <div class="col" id="aiPickList">                            
+                            </div>
+                        </div>                            
+                    {{/ifCond}}
+                    <!--// 추천 상품 영역-->
+                </div>
+            </div>
+        </div>        
+    {{/with}}
+{{/ifCond}}
+
+{{#if data.bannerInfo}}
+<!-- 마케팅/콘텐츠배너 -->
+<div id="maketingBanner">
+    {{#each data.bannerInfo.bnrList as |rl index|}}
+        {{#ifCond index '===' 0}}
+            {{#ifCond rl.useClCd '===' 'Y'}}
+            <a class="banner-detail-contents" id="bannerDetailContents" href="javascript:void(0);" pgtypcd="{{rl.pgTypCd}}" lndUrl="{{rl.bnrLnkUrl}}">
+                <img src="{{getApiCdn rl.bnrImgFileUrl}}" alt="{{rl.pgTypCd}}">
+            </a>
+            {{/ifCond}}
+        {{/ifCond}}
+    {{/each}}            
+</div>
+<!--// 마케팅/콘텐츠배너 -->
+{{/if}}
+
+</script>
+<script id="divArea2-template" type="text/x-handlebars-template">
+{{#ifCond 'A01,A02,D01' 'notIndexOf' data.prodDetail.prdType}}
+    {{#with data.prodDetail as |pd|}}        
+        <div class="card-product {{#ifCond 'D02,D03' 'notIndexOf' pd.prdType}}card-product-basic-more{{else}}card-product-group{{/ifCond}}">
+            <div class="main-txt-title"> 
+                <div class="txt-title">
+                    {{#ifCond 'B04,B05,C01,C05' 'indexOf' pd.prdType}}
+                        한 번에 모두<br/>
+                        구독할 수 있어요
+                    {{else ifCond 'B03,C02,C03,C04,C06,C07,C08' 'indexOf' pd.prdType}}
+                        구독할 상품을<br/>
+                        선택해 주세요
+                    {{else ifCond 'B02' 'indexOf' pd.prdType}}
+                        함께 이용할 혜택을<br/>
+                        선택해주세요
+                    {{else ifCond 'D02,D03' 'indexOf' pd.prdType}}                            
+                        신청할 상품 1개를<br/>
+                        선택해 주세요 
+                    {{/ifCond}}
+                </div>
+            </div>
+            <div class="com-product-container">
+                <div class="com-product-wrap {{#ifCond 'D02,D03' 'notIndexOf' pd.prdType}}no-gap{{/ifCond}}">
+                    <!-- 기본상품 영역-->
+                    {{#with pd.compPrd.slotList as |sl|}}
+                        {{#if sl.pList}}
+                            <div class="product-title {{ifCondReturn 'B02' '===' pd.prdType 'no-icon-wrap' ''}}">
+                                <div class="txt-title">
+                                    <div class="txt">{{renderHTML pd.prdTxt}}</div>
+                                    <span class="txt-sub tooltip-container tooltip-white">
+                                        <span class="inner">
+                                            <span>{{sl.selectCntText}}</span>
+                                        </span>
+                                        <span class="ico ico-info-stroke tooltip-btn" id="compToolTip" style="display:none"></span>
+                                        <div class="tooltip">
+                                            <span class="tooltip-inner">
+                                                {{sl.basBnfPrdCnt}}개까지 기본 선택이며, 더 고르실 경우 추가되는 상품마다 추가 요금 {{currencyComma sl.addStrdAmt}}원이 발생합니다.
+                                            </span>
+                                        </div>
+                                    </span>
+                                </div>
+                            </div>
+
+                            {{#ifCond 'B02' 'notIndexOf' pd.prdType}}
+                                <div class="col thumb-col">                                        
+                                    {{#each sl.pList as |pl|}}
+                                        <div class="com-product-thumb-hor-1">
+                                            <span class="thumb-product thumb-product-xs">
+                                                <span class="thumb-product-img">
+                                                    <img loading="lazy" width="100" height="100" src="{{getApiCdn pl.img}}" alt="{{pl.bnfDesc}}" />
+                                                </span>
+                                                <span class="badge-product-num-2">{{ifCondReturn 'B03,C02,C04,C06,C08,D02,D03' 'indexOf' pd.prdType '옵션' '구성'}} {{math @index '+' 1}}</span>
+                                            </span>
+                                            <span class="info-product-hor">
+                                                <span class="txt-name">{{renderHTML pl.bnfDesc}}</span>
+                                                <span class="txt-price">
+                                                    {{#ifCond 'B03,B04,B05' 'indexOf' pd.prdType}}                                                        
+                                                        {{#ifCond pl.fstScbDcYn '===' 'Y'}}
+                                                            <span class="txt-string-blue">첫 구독</span>
+                                                            <span class="txt-price-sale">{{currencyComma pl.fstScbDcPrc}}원</span>
+                                                        {{else}}
+                                                            <span class="txt-price-sale">{{currencyComma pl.amt}}원</span>
+                                                        {{/ifCond}}
+                                                        {{#if pl.scbPayTrm}}
+                                                            <span class="txt-period">/ {{pl.scbPayTrm}}</span>
+                                                        {{/if}}                                                            
+                                                    {{else}}
+                                                        {{#ifCond '03,04' 'indexOf' sl.bnfTyp}}
+                                                            {{#ifCond '0' '===' pl.addBillAmt}}
+                                                                <span class="txt-price-sale gray">+{{pl.addBillAmt}}원</span>
+                                                            {{else}}
+                                                                {{#ifCond pd.prdType '===' 'D03'}}
+                                                                <span class="txt-price-sale">{{currencyComma pl.amt}}원</span>                                                                    
+                                                                {{else}}   
+                                                                <span class="txt-price-sale">+{{currencyComma pl.addBillAmt}}원</span>
+                                                                {{/ifCond}} 
+                                                            {{/ifCond}}
+                                                        {{/ifCond}}
+                                                    {{/ifCond}}
+                                                </span>
+                                            </span>
+                                            {{#ifCond 'B03,D02,D03' 'indexOf' pd.prdType}}
+                                                <button class="btn-size btn-small bg-stroke" id="product-detail-gp1SelectBtn-{{pl.compPrdId}}" value="{{pl.compPrdId}}">
+                                                    <span>선택</span>
+                                                </button>
+                                            {{/ifCond}}
+                                            <a href="/product/detail/slot?prdId={{pl.compPrdId}}" class="inner-link"></a>
+                                        </div>
+                                    {{/each}}
+                                </div>
+                                {{#ifCond 'D02,D03' 'indexOf' pd.prdType}}
+                                    {{#ifCond  sl.pList.length '>' 3}}
+                                    <a class="btn-txt-arrow btn-all" id="gotoAllBtn">
+                                        <span class="row">
+                                            <span>전체 보기</span>
+                                            <span class="ico ico-arrow-small right"></span>
+                                        </span>
+                                    </a>                                    
+                                    {{/ifCond}}
+                                {{/ifCond}}
+                            {{/ifCond}}
+
+                        {{/if}}
+                    {{/with}}
+                    <!--// 기본상품 영역-->
+
+                    <!--  추가상품 영역-->
+                    {{#with pd.compPrd.addSlotList as |asl|}}
+                        {{#if asl}}
+                            <!-- (N개 표기)-->
+                            {{#ifCond 'C03,C04' 'indexOf' pd.prdType}}
+                                <div class="plus-bg">
+                                    <img loading="lazy" width="100" height="100" src="https://stg-cdn.sktuniverse.co.kr/m/image/details/img-div-more.png" alt="">
+                                </div>
+                                <div class="product-title">
+                                    <div class="txt-title">
+                                        <div class="txt">추가 상품</div>
+                                        <span class="txt-sub tooltip-container tooltip-white">
+                                            <span class="inner">
+                                                {{asl.selectCntText}}                                                                                                   
+                                            </span>
+                                            {{#xif asl "asl.bnfTyp === '04' && asl.basBnfPrdCnt > '0'"}}                                                    
+                                                <span class="ico ico-info-stroke tooltip-btn"></span>
+                                                <div class="tooltip">
+                                                    <span class="tooltip-inner">
+                                                        {{asl.basBnfPrdCnt}}개까지 기본 선택이며, 더 고르실 경우 추가되는 상품마다 추가 요금 {{currencyComma asl.addStrdAmt}}원이 발생합니다.
+                                                    </span>
+                                                </div>                                                    
+                                            {{/xif}}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="product-wrap-inner ico-num-wrap">
+                                    <div class="con-ico-num">
+                                        <div class="row">
+                                            <div class="list-ico row">
+                                                {{#each asl.pList as |pl|}}
+                                                    <span class="tmp-logo-img">
+                                                            <img loading="lazy" width="100" height="100" src="{{getApiCdn pl.brandImg}}" alt="">
+                                                        </span>
+                                                {{/each}}
+                                            </div>
+                                            <button class="btn-med-ico">
+                                                <!-- <span class="ico ico-plus white"></span> -->
+                                                <span>+ {{pd.compPrd.addSlotListCnt}}개</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            {{/ifCond}}
+                            <!--// (N개 표기)-->
+
+                            <!-- (N개 표기 X)-->
+                            {{#ifCond 'C05,C06,C07,C08' 'indexOf' pd.prdType}}                                    
+                                <div class="plus-bg">
+                                    <img loading="lazy" width="100" height="100" src="https://stg-cdn.sktuniverse.co.kr/m/image/details/img-div-more.png" alt="">
+                                </div>
+                                <div class="product-title">
+                                    <div class="txt-title">
+                                        <div class="txt">추가 상품</div>
+                                        <span class="txt-sub tooltip-container tooltip-white">
+                                            <span class="inner">
+                                                <span>기본 상품과 함께 구독할 수 있어요</span>
+                                            </span>
+                                            <span class="ico ico-info-stroke tooltip-btn" id="toolTip" style="display:none"></span>
+                                            <div class="tooltip">
+                                                <span class="tooltip-inner">{{asl.basBnfPrdCnt}}개까지 기본 선택이며, 추가 선택 시 {{currencyComma asl.addStrdAmt}}원이 추가됩니다.</span>
+                                            </div>                                                    
+                                        </span>
+                                    </div>
+                                </div>
+                                {{#each asl.pList as |pl|}}
+                                    <div class="col thumb-col">
+                                        <div class="com-product-thumb-hor-1">
+                                            <span class="thumb-product thumb-product-xs">
+                                                <span class="thumb-product-img">
+                                                    <img loading="lazy" width="100" height="100" src="{{getApiCdn pl.img}}" alt="{{pl.bnfDesc}}">
+                                                </span>
+                                            </span>
+                                            <span class="info-product-hor">
+                                                <span class="txt-name">{{pl.bnfDesc}}</span>
+                                            </span>
+                                            <a href="/product/detail/slot?prdId={{pl.compPrdId}}" class="inner-link"></a>
+                                        </div>
+                                    </div>
+                                {{/each}}                                    
+                            {{/ifCond}}
+                            <!--// (N개 표기 X)-->
+                        {{/if}}
+                    {{/with}}
+                    <!--// 추가상품 영역-->
+
+                    <!-- 추천 상품 영역-->
+                    {{#ifCond 'B01,B02,C03,C04' 'indexOf' pd.prdType}}                            
+                        <div class="cut-bg" style="display:none">
+                            <img loading="lazy" width="100" height="100" src="https://stg-cdn.sktuniverse.co.kr/m/image/details/img-tap.png" alt="">
+                        </div>
+                        <div class="product-wrap-inner ai-pick" id="aiPickTtlNm" style="display:none">
+                            <div class="row row-ai">
+                                <span class="ico ico-ai"></span>
+                                <span class="row txt-sub">
+                                    <span>고객님께 추천하는 상품</span>
+                                </span>
+                            </div>
+                            <div class="col" id="aiPickList">                            
+                            </div>
+                        </div>                            
+                    {{/ifCond}}
+                    <!--// 추천 상품 영역-->
+                </div>
+            </div>
+        </div>        
+    {{/with}}
+{{/ifCond}}
+
+{{#if data.bannerInfo}}
+<!-- 마케팅/콘텐츠배너 -->
+<div id="maketingBanner">
+    {{#each data.bannerInfo.bnrList as |rl index|}}
+        {{#ifCond index '===' 0}}
+            {{#ifCond rl.useClCd '===' 'Y'}}
+            <a class="banner-detail-contents" id="bannerDetailContents" href="javascript:void(0);" pgtypcd="{{rl.pgTypCd}}" lndUrl="{{rl.bnrLnkUrl}}">
+                <img src="{{getApiCdn rl.bnrImgFileUrl}}" alt="{{rl.pgTypCd}}">
+            </a>
+            {{/ifCond}}
+        {{/ifCond}}
+    {{/each}}            
+</div>
+<!--// 마케팅/콘텐츠배너 -->
+{{/if}}
+
+</script>
+<script id="divArea2-template" type="text/x-handlebars-template">
+{{#ifCond 'A01,A02,D01' 'notIndexOf' data.prodDetail.prdType}}
+    {{#with data.prodDetail as |pd|}}        
+        <div class="card-product {{#ifCond 'D02,D03' 'notIndexOf' pd.prdType}}card-product-basic-more{{else}}card-product-group{{/ifCond}}">
+            <div class="main-txt-title"> 
+                <div class="txt-title">
+                    {{#ifCond 'B04,B05,C01,C05' 'indexOf' pd.prdType}}
+                        한 번에 모두<br/>
+                        구독할 수 있어요
+                    {{else ifCond 'B03,C02,C03,C04,C06,C07,C08' 'indexOf' pd.prdType}}
+                        구독할 상품을<br/>
+                        선택해 주세요
+                    {{else ifCond 'B02' 'indexOf' pd.prdType}}
+                        함께 이용할 혜택을<br/>
+                        선택해주세요
+                    {{else ifCond 'D02,D03' 'indexOf' pd.prdType}}                            
+                        신청할 상품 1개를<br/>
+                        선택해 주세요 
+                    {{/ifCond}}
+                </div>
+            </div>
+            <div class="com-product-container">
+                <div class="com-product-wrap {{#ifCond 'D02,D03' 'notIndexOf' pd.prdType}}no-gap{{/ifCond}}">
+                    <!-- 기본상품 영역-->
+                    {{#with pd.compPrd.slotList as |sl|}}
+                        {{#if sl.pList}}
+                            <div class="product-title {{ifCondReturn 'B02' '===' pd.prdType 'no-icon-wrap' ''}}">
+                                <div class="txt-title">
+                                    <div class="txt">{{renderHTML pd.prdTxt}}</div>
+                                    <span class="txt-sub tooltip-container tooltip-white">
+                                        <span class="inner">
+                                            <span>{{sl.selectCntText}}</span>
+                                        </span>
+                                        <span class="ico ico-info-stroke tooltip-btn" id="compToolTip" style="display:none"></span>
+                                        <div class="tooltip">
+                                            <span class="tooltip-inner">
+                                                {{sl.basBnfPrdCnt}}개까지 기본 선택이며, 더 고르실 경우 추가되는 상품마다 추가 요금 {{currencyComma sl.addStrdAmt}}원이 발생합니다.
+                                            </span>
+                                        </div>
+                                    </span>
+                                </div>
+                            </div>
+
+                            {{#ifCond 'B02' 'notIndexOf' pd.prdType}}
+                                <div class="col thumb-col">                                        
+                                    {{#each sl.pList as |pl|}}
+                                        <div class="com-product-thumb-hor-1">
+                                            <span class="thumb-product thumb-product-xs">
+                                                <span class="thumb-product-img">
+                                                    <img loading="lazy" width="100" height="100" src="{{getApiCdn pl.img}}" alt="{{pl.bnfDesc}}" />
+                                                </span>
+                                                <span class="badge-product-num-2">{{ifCondReturn 'B03,C02,C04,C06,C08,D02,D03' 'indexOf' pd.prdType '옵션' '구성'}} {{math @index '+' 1}}</span>
+                                            </span>
+                                            <span class="info-product-hor">
+                                                <span class="txt-name">{{renderHTML pl.bnfDesc}}</span>
+                                                <span class="txt-price">
+                                                    {{#ifCond 'B03,B04,B05' 'indexOf' pd.prdType}}                                                        
+                                                        {{#ifCond pl.fstScbDcYn '===' 'Y'}}
+                                                            <span class="txt-string-blue">첫 구독</span>
+                                                            <span class="txt-price-sale">{{currencyComma pl.fstScbDcPrc}}원</span>
+                                                        {{else}}
+                                                            <span class="txt-price-sale">{{currencyComma pl.amt}}원</span>
+                                                        {{/ifCond}}
+                                                        {{#if pl.scbPayTrm}}
+                                                            <span class="txt-period">/ {{pl.scbPayTrm}}</span>
+                                                        {{/if}}                                                            
+                                                    {{else}}
+                                                        {{#ifCond '03,04' 'indexOf' sl.bnfTyp}}
+                                                            {{#ifCond '0' '===' pl.addBillAmt}}
+                                                                <span class="txt-price-sale gray">+{{pl.addBillAmt}}원</span>
+                                                            {{else}}
+                                                                {{#ifCond pd.prdType '===' 'D03'}}
+                                                                <span class="txt-price-sale">{{currencyComma pl.amt}}원</span>                                                                    
+                                                                {{else}}   
+                                                                <span class="txt-price-sale">+{{currencyComma pl.addBillAmt}}원</span>
+                                                                {{/ifCond}} 
+                                                            {{/ifCond}}
+                                                        {{/ifCond}}
+                                                    {{/ifCond}}
+                                                </span>
+                                            </span>
+                                            {{#ifCond 'B03,D02,D03' 'indexOf' pd.prdType}}
+                                                <button class="btn-size btn-small bg-stroke" id="product-detail-gp1SelectBtn-{{pl.compPrdId}}" value="{{pl.compPrdId}}">
+                                                    <span>선택</span>
+                                                </button>
+                                            {{/ifCond}}
+                                            <a href="/product/detail/slot?prdId={{pl.compPrdId}}" class="inner-link"></a>
+                                        </div>
+                                    {{/each}}
+                                </div>
+                                {{#ifCond 'D02,D03' 'indexOf' pd.prdType}}
+                                    {{#ifCond  sl.pList.length '>' 3}}
+                                    <a class="btn-txt-arrow btn-all" id="gotoAllBtn">
+                                        <span class="row">
+                                            <span>전체 보기</span>
+                                            <span class="ico ico-arrow-small right"></span>
+                                        </span>
+                                    </a>                                    
+                                    {{/ifCond}}
+                                {{/ifCond}}
+                            {{/ifCond}}
+
+                        {{/if}}
+                    {{/with}}
+                    <!--// 기본상품 영역-->
+
+                    <!--  추가상품 영역-->
+                    {{#with pd.compPrd.addSlotList as |asl|}}
+                        {{#if asl}}
+                            <!-- (N개 표기)-->
+                            {{#ifCond 'C03,C04' 'indexOf' pd.prdType}}
+                                <div class="plus-bg">
+                                    <img loading="lazy" width="100" height="100" src="https://stg-cdn.sktuniverse.co.kr/m/image/details/img-div-more.png" alt="">
+                                </div>
+                                <div class="product-title">
+                                    <div class="txt-title">
+                                        <div class="txt">추가 상품</div>
+                                        <span class="txt-sub tooltip-container tooltip-white">
+                                            <span class="inner">
+                                                {{asl.selectCntText}}                                                                                                   
+                                            </span>
+                                            {{#xif asl "asl.bnfTyp === '04' && asl.basBnfPrdCnt > '0'"}}                                                    
+                                                <span class="ico ico-info-stroke tooltip-btn"></span>
+                                                <div class="tooltip">
+                                                    <span class="tooltip-inner">
+                                                        {{asl.basBnfPrdCnt}}개까지 기본 선택이며, 더 고르실 경우 추가되는 상품마다 추가 요금 {{currencyComma asl.addStrdAmt}}원이 발생합니다.
+                                                    </span>
+                                                </div>                                                    
+                                            {{/xif}}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="product-wrap-inner ico-num-wrap">
+                                    <div class="con-ico-num">
+                                        <div class="row">
+                                            <div class="list-ico row">
+                                                {{#each asl.pList as |pl|}}
+                                                    <span class="tmp-logo-img">
+                                                            <img loading="lazy" width="100" height="100" src="{{getApiCdn pl.brandImg}}" alt="">
+                                                        </span>
+                                                {{/each}}
+                                            </div>
+                                            <button class="btn-med-ico">
+                                                <!-- <span class="ico ico-plus white"></span> -->
+                                                <span>+ {{pd.compPrd.addSlotListCnt}}개</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            {{/ifCond}}
+                            <!--// (N개 표기)-->
+
+                            <!-- (N개 표기 X)-->
+                            {{#ifCond 'C05,C06,C07,C08' 'indexOf' pd.prdType}}                                    
+                                <div class="plus-bg">
+                                    <img loading="lazy" width="100" height="100" src="https://stg-cdn.sktuniverse.co.kr/m/image/details/img-div-more.png" alt="">
+                                </div>
+                                <div class="product-title">
+                                    <div class="txt-title">
+                                        <div class="txt">추가 상품</div>
+                                        <span class="txt-sub tooltip-container tooltip-white">
+                                            <span class="inner">
+                                                <span>기본 상품과 함께 구독할 수 있어요</span>
+                                            </span>
+                                            <span class="ico ico-info-stroke tooltip-btn" id="toolTip" style="display:none"></span>
+                                            <div class="tooltip">
+                                                <span class="tooltip-inner">{{asl.basBnfPrdCnt}}개까지 기본 선택이며, 추가 선택 시 {{currencyComma asl.addStrdAmt}}원이 추가됩니다.</span>
+                                            </div>                                                    
+                                        </span>
+                                    </div>
+                                </div>
+                                {{#each asl.pList as |pl|}}
+                                    <div class="col thumb-col">
+                                        <div class="com-product-thumb-hor-1">
+                                            <span class="thumb-product thumb-product-xs">
+                                                <span class="thumb-product-img">
+                                                    <img loading="lazy" width="100" height="100" src="{{getApiCdn pl.img}}" alt="{{pl.bnfDesc}}">
+                                                </span>
+                                            </span>
+                                            <span class="info-product-hor">
+                                                <span class="txt-name">{{pl.bnfDesc}}</span>
+                                            </span>
+                                            <a href="/product/detail/slot?prdId={{pl.compPrdId}}" class="inner-link"></a>
+                                        </div>
+                                    </div>
+                                {{/each}}                                    
+                            {{/ifCond}}
+                            <!--// (N개 표기 X)-->
+                        {{/if}}
+                    {{/with}}
+                    <!--// 추가상품 영역-->
+
+                    <!-- 추천 상품 영역-->
+                    {{#ifCond 'B01,B02,C03,C04' 'indexOf' pd.prdType}}                            
+                        <div class="cut-bg" style="display:none">
+                            <img loading="lazy" width="100" height="100" src="https://stg-cdn.sktuniverse.co.kr/m/image/details/img-tap.png" alt="">
+                        </div>
+                        <div class="product-wrap-inner ai-pick" id="aiPickTtlNm" style="display:none">
+                            <div class="row row-ai">
+                                <span class="ico ico-ai"></span>
+                                <span class="row txt-sub">
+                                    <span>고객님께 추천하는 상품</span>
+                                </span>
+                            </div>
+                            <div class="col" id="aiPickList">                            
+                            </div>
+                        </div>                            
+                    {{/ifCond}}
+                    <!--// 추천 상품 영역-->
+                </div>
+            </div>
+        </div>        
+    {{/with}}
+{{/ifCond}}
+
+{{#if data.bannerInfo}}
+<!-- 마케팅/콘텐츠배너 -->
+<div id="maketingBanner">
+    {{#each data.bannerInfo.bnrList as |rl index|}}
+        {{#ifCond index '===' 0}}
+            {{#ifCond rl.useClCd '===' 'Y'}}
+            <a class="banner-detail-contents" id="bannerDetailContents" href="javascript:void(0);" pgtypcd="{{rl.pgTypCd}}" lndUrl="{{rl.bnrLnkUrl}}">
+                <img src="{{getApiCdn rl.bnrImgFileUrl}}" alt="{{rl.pgTypCd}}">
+            </a>
+            {{/ifCond}}
+        {{/ifCond}}
+    {{/each}}            
+</div>
+<!--// 마케팅/콘텐츠배너 -->
+{{/if}}
+
+</script>
+<script id="divArea2-template" type="text/x-handlebars-template">
+{{#ifCond 'A01,A02,D01' 'notIndexOf' data.prodDetail.prdType}}
+    {{#with data.prodDetail as |pd|}}        
+        <div class="card-product {{#ifCond 'D02,D03' 'notIndexOf' pd.prdType}}card-product-basic-more{{else}}card-product-group{{/ifCond}}">
+            <div class="main-txt-title"> 
+                <div class="txt-title">
+                    {{#ifCond 'B04,B05,C01,C05' 'indexOf' pd.prdType}}
+                        한 번에 모두<br/>
+                        구독할 수 있어요
+                    {{else ifCond 'B03,C02,C03,C04,C06,C07,C08' 'indexOf' pd.prdType}}
+                        구독할 상품을<br/>
+                        선택해 주세요
+                    {{else ifCond 'B02' 'indexOf' pd.prdType}}
+                        함께 이용할 혜택을<br/>
+                        선택해주세요
+                    {{else ifCond 'D02,D03' 'indexOf' pd.prdType}}                            
+                        신청할 상품 1개를<br/>
+                        선택해 주세요 
+                    {{/ifCond}}
+                </div>
+            </div>
+            <div class="com-product-container">
+                <div class="com-product-wrap {{#ifCond 'D02,D03' 'notIndexOf' pd.prdType}}no-gap{{/ifCond}}">
+                    <!-- 기본상품 영역-->
+                    {{#with pd.compPrd.slotList as |sl|}}
+                        {{#if sl.pList}}
+                            <div class="product-title {{ifCondReturn 'B02' '===' pd.prdType 'no-icon-wrap' ''}}">
+                                <div class="txt-title">
+                                    <div class="txt">{{renderHTML pd.prdTxt}}</div>
+                                    <span class="txt-sub tooltip-container tooltip-white">
+                                        <span class="inner">
+                                            <span>{{sl.selectCntText}}</span>
+                                        </span>
+                                        <span class="ico ico-info-stroke tooltip-btn" id="compToolTip" style="display:none"></span>
+                                        <div class="tooltip">
+                                            <span class="tooltip-inner">
+                                                {{sl.basBnfPrdCnt}}개까지 기본 선택이며, 더 고르실 경우 추가되는 상품마다 추가 요금 {{currencyComma sl.addStrdAmt}}원이 발생합니다.
+                                            </span>
+                                        </div>
+                                    </span>
+                                </div>
+                            </div>
+
+                            {{#ifCond 'B02' 'notIndexOf' pd.prdType}}
+                                <div class="col thumb-col">                                        
+                                    {{#each sl.pList as |pl|}}
+                                        <div class="com-product-thumb-hor-1">
+                                            <span class="thumb-product thumb-product-xs">
+                                                <span class="thumb-product-img">
+                                                    <img loading="lazy" width="100" height="100" src="{{getApiCdn pl.img}}" alt="{{pl.bnfDesc}}" />
+                                                </span>
+                                                <span class="badge-product-num-2">{{ifCondReturn 'B03,C02,C04,C06,C08,D02,D03' 'indexOf' pd.prdType '옵션' '구성'}} {{math @index '+' 1}}</span>
+                                            </span>
+                                            <span class="info-product-hor">
+                                                <span class="txt-name">{{renderHTML pl.bnfDesc}}</span>
+                                                <span class="txt-price">
+                                                    {{#ifCond 'B03,B04,B05' 'indexOf' pd.prdType}}                                                        
+                                                        {{#ifCond pl.fstScbDcYn '===' 'Y'}}
+                                                            <span class="txt-string-blue">첫 구독</span>
+                                                            <span class="txt-price-sale">{{currencyComma pl.fstScbDcPrc}}원</span>
+                                                        {{else}}
+                                                            <span class="txt-price-sale">{{currencyComma pl.amt}}원</span>
+                                                        {{/ifCond}}
+                                                        {{#if pl.scbPayTrm}}
+                                                            <span class="txt-period">/ {{pl.scbPayTrm}}</span>
+                                                        {{/if}}                                                            
+                                                    {{else}}
+                                                        {{#ifCond '03,04' 'indexOf' sl.bnfTyp}}
+                                                            {{#ifCond '0' '===' pl.addBillAmt}}
+                                                                <span class="txt-price-sale gray">+{{pl.addBillAmt}}원</span>
+                                                            {{else}}
+                                                                {{#ifCond pd.prdType '===' 'D03'}}
+                                                                <span class="txt-price-sale">{{currencyComma pl.amt}}원</span>                                                                    
+                                                                {{else}}   
+                                                                <span class="txt-price-sale">+{{currencyComma pl.addBillAmt}}원</span>
+                                                                {{/ifCond}} 
+                                                            {{/ifCond}}
+                                                        {{/ifCond}}
+                                                    {{/ifCond}}
+                                                </span>
+                                            </span>
+                                            {{#ifCond 'B03,D02,D03' 'indexOf' pd.prdType}}
+                                                <button class="btn-size btn-small bg-stroke" id="product-detail-gp1SelectBtn-{{pl.compPrdId}}" value="{{pl.compPrdId}}">
+                                                    <span>선택</span>
+                                                </button>
+                                            {{/ifCond}}
+                                            <a href="/product/detail/slot?prdId={{pl.compPrdId}}" class="inner-link"></a>
+                                        </div>
+                                    {{/each}}
+                                </div>
+                                {{#ifCond 'D02,D03' 'indexOf' pd.prdType}}
+                                    {{#ifCond  sl.pList.length '>' 3}}
+                                    <a class="btn-txt-arrow btn-all" id="gotoAllBtn">
+                                        <span class="row">
+                                            <span>전체 보기</span>
+                                            <span class="ico ico-arrow-small right"></span>
+                                        </span>
+                                    </a>                                    
+                                    {{/ifCond}}
+                                {{/ifCond}}
+                            {{/ifCond}}
+
+                        {{/if}}
+                    {{/with}}
+                    <!--// 기본상품 영역-->
+
+                    <!--  추가상품 영역-->
+                    {{#with pd.compPrd.addSlotList as |asl|}}
+                        {{#if asl}}
+                            <!-- (N개 표기)-->
+                            {{#ifCond 'C03,C04' 'indexOf' pd.prdType}}
+                                <div class="plus-bg">
+                                    <img loading="lazy" width="100" height="100" src="https://stg-cdn.sktuniverse.co.kr/m/image/details/img-div-more.png" alt="">
+                                </div>
+                                <div class="product-title">
+                                    <div class="txt-title">
+                                        <div class="txt">추가 상품</div>
+                                        <span class="txt-sub tooltip-container tooltip-white">
+                                            <span class="inner">
+                                                {{asl.selectCntText}}                                                                                                   
+                                            </span>
+                                            {{#xif asl "asl.bnfTyp === '04' && asl.basBnfPrdCnt > '0'"}}                                                    
+                                                <span class="ico ico-info-stroke tooltip-btn"></span>
+                                                <div class="tooltip">
+                                                    <span class="tooltip-inner">
+                                                        {{asl.basBnfPrdCnt}}개까지 기본 선택이며, 더 고르실 경우 추가되는 상품마다 추가 요금 {{currencyComma asl.addStrdAmt}}원이 발생합니다.
+                                                    </span>
+                                                </div>                                                    
+                                            {{/xif}}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="product-wrap-inner ico-num-wrap">
+                                    <div class="con-ico-num">
+                                        <div class="row">
+                                            <div class="list-ico row">
+                                                {{#each asl.pList as |pl|}}
+                                                    <span class="tmp-logo-img">
+                                                            <img loading="lazy" width="100" height="100" src="{{getApiCdn pl.brandImg}}" alt="">
+                                                        </span>
+                                                {{/each}}
+                                            </div>
+                                            <button class="btn-med-ico">
+                                                <!-- <span class="ico ico-plus white"></span> -->
+                                                <span>+ {{pd.compPrd.addSlotListCnt}}개</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            {{/ifCond}}
+                            <!--// (N개 표기)-->
+
+                            <!-- (N개 표기 X)-->
+                            {{#ifCond 'C05,C06,C07,C08' 'indexOf' pd.prdType}}                                    
+                                <div class="plus-bg">
+                                    <img loading="lazy" width="100" height="100" src="https://stg-cdn.sktuniverse.co.kr/m/image/details/img-div-more.png" alt="">
+                                </div>
+                                <div class="product-title">
+                                    <div class="txt-title">
+                                        <div class="txt">추가 상품</div>
+                                        <span class="txt-sub tooltip-container tooltip-white">
+                                            <span class="inner">
+                                                <span>기본 상품과 함께 구독할 수 있어요</span>
+                                            </span>
+                                            <span class="ico ico-info-stroke tooltip-btn" id="toolTip" style="display:none"></span>
+                                            <div class="tooltip">
+                                                <span class="tooltip-inner">{{asl.basBnfPrdCnt}}개까지 기본 선택이며, 추가 선택 시 {{currencyComma asl.addStrdAmt}}원이 추가됩니다.</span>
+                                            </div>                                                    
+                                        </span>
+                                    </div>
+                                </div>
+                                {{#each asl.pList as |pl|}}
+                                    <div class="col thumb-col">
+                                        <div class="com-product-thumb-hor-1">
+                                            <span class="thumb-product thumb-product-xs">
+                                                <span class="thumb-product-img">
+                                                    <img loading="lazy" width="100" height="100" src="{{getApiCdn pl.img}}" alt="{{pl.bnfDesc}}">
+                                                </span>
+                                            </span>
+                                            <span class="info-product-hor">
+                                                <span class="txt-name">{{pl.bnfDesc}}</span>
+                                            </span>
+                                            <a href="/product/detail/slot?prdId={{pl.compPrdId}}" class="inner-link"></a>
+                                        </div>
+                                    </div>
+                                {{/each}}                                    
+                            {{/ifCond}}
+                            <!--// (N개 표기 X)-->
+                        {{/if}}
+                    {{/with}}
+                    <!--// 추가상품 영역-->
+
+                    <!-- 추천 상품 영역-->
+                    {{#ifCond 'B01,B02,C03,C04' 'indexOf' pd.prdType}}                            
+                        <div class="cut-bg" style="display:none">
+                            <img loading="lazy" width="100" height="100" src="https://stg-cdn.sktuniverse.co.kr/m/image/details/img-tap.png" alt="">
+                        </div>
+                        <div class="product-wrap-inner ai-pick" id="aiPickTtlNm" style="display:none">
+                            <div class="row row-ai">
+                                <span class="ico ico-ai"></span>
+                                <span class="row txt-sub">
+                                    <span>고객님께 추천하는 상품</span>
+                                </span>
+                            </div>
+                            <div class="col" id="aiPickList">                            
+                            </div>
+                        </div>                            
+                    {{/ifCond}}
+                    <!--// 추천 상품 영역-->
+                </div>
+            </div>
+        </div>        
+    {{/with}}
+{{/ifCond}}
+
+{{#if data.bannerInfo}}
+<!-- 마케팅/콘텐츠배너 -->
+<div id="maketingBanner">
+    {{#each data.bannerInfo.bnrList as |rl index|}}
+        {{#ifCond index '===' 0}}
+            {{#ifCond rl.useClCd '===' 'Y'}}
+            <a class="banner-detail-contents" id="bannerDetailContents" href="javascript:void(0);" pgtypcd="{{rl.pgTypCd}}" lndUrl="{{rl.bnrLnkUrl}}">
+                <img src="{{getApiCdn rl.bnrImgFileUrl}}" alt="{{rl.pgTypCd}}">
+            </a>
+            {{/ifCond}}
+        {{/ifCond}}
+    {{/each}}            
+</div>
+<!--// 마케팅/콘텐츠배너 -->
+{{/if}}
+
+</script>
+<script id="divArea2-template" type="text/x-handlebars-template">
+{{#ifCond 'A01,A02,D01' 'notIndexOf' data.prodDetail.prdType}}
+    {{#with data.prodDetail as |pd|}}        
+        <div class="card-product {{#ifCond 'D02,D03' 'notIndexOf' pd.prdType}}card-product-basic-more{{else}}card-product-group{{/ifCond}}">
+            <div class="main-txt-title"> 
+                <div class="txt-title">
+                    {{#ifCond 'B04,B05,C01,C05' 'indexOf' pd.prdType}}
+                        한 번에 모두<br/>
+                        구독할 수 있어요
+                    {{else ifCond 'B03,C02,C03,C04,C06,C07,C08' 'indexOf' pd.prdType}}
+                        구독할 상품을<br/>
+                        선택해 주세요
+                    {{else ifCond 'B02' 'indexOf' pd.prdType}}
+                        함께 이용할 혜택을<br/>
+                        선택해주세요
+                    {{else ifCond 'D02,D03' 'indexOf' pd.prdType}}                            
+                        신청할 상품 1개를<br/>
+                        선택해 주세요 
+                    {{/ifCond}}
+                </div>
+            </div>
+            <div class="com-product-container">
+                <div class="com-product-wrap {{#ifCond 'D02,D03' 'notIndexOf' pd.prdType}}no-gap{{/ifCond}}">
+                    <!-- 기본상품 영역-->
+                    {{#with pd.compPrd.slotList as |sl|}}
+                        {{#if sl.pList}}
+                            <div class="product-title {{ifCondReturn 'B02' '===' pd.prdType 'no-icon-wrap' ''}}">
+                                <div class="txt-title">
+                                    <div class="txt">{{renderHTML pd.prdTxt}}</div>
+                                    <span class="txt-sub tooltip-container tooltip-white">
+                                        <span class="inner">
+                                            <span>{{sl.selectCntText}}</span>
+                                        </span>
+                                        <span class="ico ico-info-stroke tooltip-btn" id="compToolTip" style="display:none"></span>
+                                        <div class="tooltip">
+                                            <span class="tooltip-inner">
+                                                {{sl.basBnfPrdCnt}}개까지 기본 선택이며, 더 고르실 경우 추가되는 상품마다 추가 요금 {{currencyComma sl.addStrdAmt}}원이 발생합니다.
+                                            </span>
+                                        </div>
+                                    </span>
+                                </div>
+                            </div>
+
+                            {{#ifCond 'B02' 'notIndexOf' pd.prdType}}
+                                <div class="col thumb-col">                                        
+                                    {{#each sl.pList as |pl|}}
+                                        <div class="com-product-thumb-hor-1">
+                                            <span class="thumb-product thumb-product-xs">
+                                                <span class="thumb-product-img">
+                                                    <img loading="lazy" width="100" height="100" src="{{getApiCdn pl.img}}" alt="{{pl.bnfDesc}}" />
+                                                </span>
+                                                <span class="badge-product-num-2">{{ifCondReturn 'B03,C02,C04,C06,C08,D02,D03' 'indexOf' pd.prdType '옵션' '구성'}} {{math @index '+' 1}}</span>
+                                            </span>
+                                            <span class="info-product-hor">
+                                                <span class="txt-name">{{renderHTML pl.bnfDesc}}</span>
+                                                <span class="txt-price">
+                                                    {{#ifCond 'B03,B04,B05' 'indexOf' pd.prdType}}                                                        
+                                                        {{#ifCond pl.fstScbDcYn '===' 'Y'}}
+                                                            <span class="txt-string-blue">첫 구독</span>
+                                                            <span class="txt-price-sale">{{currencyComma pl.fstScbDcPrc}}원</span>
+                                                        {{else}}
+                                                            <span class="txt-price-sale">{{currencyComma pl.amt}}원</span>
+                                                        {{/ifCond}}
+                                                        {{#if pl.scbPayTrm}}
+                                                            <span class="txt-period">/ {{pl.scbPayTrm}}</span>
+                                                        {{/if}}                                                            
+                                                    {{else}}
+                                                        {{#ifCond '03,04' 'indexOf' sl.bnfTyp}}
+                                                            {{#ifCond '0' '===' pl.addBillAmt}}
+                                                                <span class="txt-price-sale gray">+{{pl.addBillAmt}}원</span>
+                                                            {{else}}
+                                                                {{#ifCond pd.prdType '===' 'D03'}}
+                                                                <span class="txt-price-sale">{{currencyComma pl.amt}}원</span>                                                                    
+                                                                {{else}}   
+                                                                <span class="txt-price-sale">+{{currencyComma pl.addBillAmt}}원</span>
+                                                                {{/ifCond}} 
+                                                            {{/ifCond}}
+                                                        {{/ifCond}}
+                                                    {{/ifCond}}
+                                                </span>
+                                            </span>
+                                            {{#ifCond 'B03,D02,D03' 'indexOf' pd.prdType}}
+                                                <button class="btn-size btn-small bg-stroke" id="product-detail-gp1SelectBtn-{{pl.compPrdId}}" value="{{pl.compPrdId}}">
+                                                    <span>선택</span>
+                                                </button>
+                                            {{/ifCond}}
+                                            <a href="/product/detail/slot?prdId={{pl.compPrdId}}" class="inner-link"></a>
+                                        </div>
+                                    {{/each}}
+                                </div>
+                                {{#ifCond 'D02,D03' 'indexOf' pd.prdType}}
+                                    {{#ifCond  sl.pList.length '>' 3}}
+                                    <a class="btn-txt-arrow btn-all" id="gotoAllBtn">
+                                        <span class="row">
+                                            <span>전체 보기</span>
+                                            <span class="ico ico-arrow-small right"></span>
+                                        </span>
+                                    </a>                                    
+                                    {{/ifCond}}
+                                {{/ifCond}}
+                            {{/ifCond}}
+
+                        {{/if}}
+                    {{/with}}
+                    <!--// 기본상품 영역-->
+
+                    <!--  추가상품 영역-->
+                    {{#with pd.compPrd.addSlotList as |asl|}}
+                        {{#if asl}}
+                            <!-- (N개 표기)-->
+                            {{#ifCond 'C03,C04' 'indexOf' pd.prdType}}
+                                <div class="plus-bg">
+                                    <img loading="lazy" width="100" height="100" src="https://stg-cdn.sktuniverse.co.kr/m/image/details/img-div-more.png" alt="">
+                                </div>
+                                <div class="product-title">
+                                    <div class="txt-title">
+                                        <div class="txt">추가 상품</div>
+                                        <span class="txt-sub tooltip-container tooltip-white">
+                                            <span class="inner">
+                                                {{asl.selectCntText}}                                                                                                   
+                                            </span>
+                                            {{#xif asl "asl.bnfTyp === '04' && asl.basBnfPrdCnt > '0'"}}                                                    
+                                                <span class="ico ico-info-stroke tooltip-btn"></span>
+                                                <div class="tooltip">
+                                                    <span class="tooltip-inner">
+                                                        {{asl.basBnfPrdCnt}}개까지 기본 선택이며, 더 고르실 경우 추가되는 상품마다 추가 요금 {{currencyComma asl.addStrdAmt}}원이 발생합니다.
+                                                    </span>
+                                                </div>                                                    
+                                            {{/xif}}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="product-wrap-inner ico-num-wrap">
+                                    <div class="con-ico-num">
+                                        <div class="row">
+                                            <div class="list-ico row">
+                                                {{#each asl.pList as |pl|}}
+                                                    <span class="tmp-logo-img">
+                                                            <img loading="lazy" width="100" height="100" src="{{getApiCdn pl.brandImg}}" alt="">
+                                                        </span>
+                                                {{/each}}
+                                            </div>
+                                            <button class="btn-med-ico">
+                                                <!-- <span class="ico ico-plus white"></span> -->
+                                                <span>+ {{pd.compPrd.addSlotListCnt}}개</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            {{/ifCond}}
+                            <!--// (N개 표기)-->
+
+                            <!-- (N개 표기 X)-->
+                            {{#ifCond 'C05,C06,C07,C08' 'indexOf' pd.prdType}}                                    
+                                <div class="plus-bg">
+                                    <img loading="lazy" width="100" height="100" src="https://stg-cdn.sktuniverse.co.kr/m/image/details/img-div-more.png" alt="">
+                                </div>
+                                <div class="product-title">
+                                    <div class="txt-title">
+                                        <div class="txt">추가 상품</div>
+                                        <span class="txt-sub tooltip-container tooltip-white">
+                                            <span class="inner">
+                                                <span>기본 상품과 함께 구독할 수 있어요</span>
+                                            </span>
+                                            <span class="ico ico-info-stroke tooltip-btn" id="toolTip" style="display:none"></span>
+                                            <div class="tooltip">
+                                                <span class="tooltip-inner">{{asl.basBnfPrdCnt}}개까지 기본 선택이며, 추가 선택 시 {{currencyComma asl.addStrdAmt}}원이 추가됩니다.</span>
+                                            </div>                                                    
+                                        </span>
+                                    </div>
+                                </div>
+                                {{#each asl.pList as |pl|}}
+                                    <div class="col thumb-col">
+                                        <div class="com-product-thumb-hor-1">
+                                            <span class="thumb-product thumb-product-xs">
+                                                <span class="thumb-product-img">
+                                                    <img loading="lazy" width="100" height="100" src="{{getApiCdn pl.img}}" alt="{{pl.bnfDesc}}">
+                                                </span>
+                                            </span>
+                                            <span class="info-product-hor">
+                                                <span class="txt-name">{{pl.bnfDesc}}</span>
+                                            </span>
+                                            <a href="/product/detail/slot?prdId={{pl.compPrdId}}" class="inner-link"></a>
+                                        </div>
+                                    </div>
+                                {{/each}}                                    
+                            {{/ifCond}}
+                            <!--// (N개 표기 X)-->
+                        {{/if}}
+                    {{/with}}
+                    <!--// 추가상품 영역-->
+
+                    <!-- 추천 상품 영역-->
+                    {{#ifCond 'B01,B02,C03,C04' 'indexOf' pd.prdType}}                            
+                        <div class="cut-bg" style="display:none">
+                            <img loading="lazy" width="100" height="100" src="https://stg-cdn.sktuniverse.co.kr/m/image/details/img-tap.png" alt="">
+                        </div>
+                        <div class="product-wrap-inner ai-pick" id="aiPickTtlNm" style="display:none">
+                            <div class="row row-ai">
+                                <span class="ico ico-ai"></span>
+                                <span class="row txt-sub">
+                                    <span>고객님께 추천하는 상품</span>
+                                </span>
+                            </div>
+                            <div class="col" id="aiPickList">                            
+                            </div>
+                        </div>                            
+                    {{/ifCond}}
+                    <!--// 추천 상품 영역-->
+                </div>
+            </div>
+        </div>        
+    {{/with}}
+{{/ifCond}}
+
+{{#if data.bannerInfo}}
+<!-- 마케팅/콘텐츠배너 -->
+<div id="maketingBanner">
+    {{#each data.bannerInfo.bnrList as |rl index|}}
+        {{#ifCond index '===' 0}}
+            {{#ifCond rl.useClCd '===' 'Y'}}
+            <a class="banner-detail-contents" id="bannerDetailContents" href="javascript:void(0);" pgtypcd="{{rl.pgTypCd}}" lndUrl="{{rl.bnrLnkUrl}}">
+                <img src="{{getApiCdn rl.bnrImgFileUrl}}" alt="{{rl.pgTypCd}}">
+            </a>
+            {{/ifCond}}
+        {{/ifCond}}
+    {{/each}}            
+</div>
+<!--// 마케팅/콘텐츠배너 -->
+{{/if}}
+
+</script>
+<script id="divArea2-template" type="text/x-handlebars-template">
+{{#ifCond 'A01,A02,D01' 'notIndexOf' data.prodDetail.prdType}}
+    {{#with data.prodDetail as |pd|}}        
+        <div class="card-product {{#ifCond 'D02,D03' 'notIndexOf' pd.prdType}}card-product-basic-more{{else}}card-product-group{{/ifCond}}">
+            <div class="main-txt-title"> 
+                <div class="txt-title">
+                    {{#ifCond 'B04,B05,C01,C05' 'indexOf' pd.prdType}}
+                        한 번에 모두<br/>
+                        구독할 수 있어요
+                    {{else ifCond 'B03,C02,C03,C04,C06,C07,C08' 'indexOf' pd.prdType}}
+                        구독할 상품을<br/>
+                        선택해 주세요
+                    {{else ifCond 'B02' 'indexOf' pd.prdType}}
+                        함께 이용할 혜택을<br/>
+                        선택해주세요
+                    {{else ifCond 'D02,D03' 'indexOf' pd.prdType}}                            
+                        신청할 상품 1개를<br/>
+                        선택해 주세요 
+                    {{/ifCond}}
+                </div>
+            </div>
+            <div class="com-product-container">
+                <div class="com-product-wrap {{#ifCond 'D02,D03' 'notIndexOf' pd.prdType}}no-gap{{/ifCond}}">
+                    <!-- 기본상품 영역-->
+                    {{#with pd.compPrd.slotList as |sl|}}
+                        {{#if sl.pList}}
+                            <div class="product-title {{ifCondReturn 'B02' '===' pd.prdType 'no-icon-wrap' ''}}">
+                                <div class="txt-title">
+                                    <div class="txt">{{renderHTML pd.prdTxt}}</div>
+                                    <span class="txt-sub tooltip-container tooltip-white">
+                                        <span class="inner">
+                                            <span>{{sl.selectCntText}}</span>
+                                        </span>
+                                        <span class="ico ico-info-stroke tooltip-btn" id="compToolTip" style="display:none"></span>
+                                        <div class="tooltip">
+                                            <span class="tooltip-inner">
+                                                {{sl.basBnfPrdCnt}}개까지 기본 선택이며, 더 고르실 경우 추가되는 상품마다 추가 요금 {{currencyComma sl.addStrdAmt}}원이 발생합니다.
+                                            </span>
+                                        </div>
+                                    </span>
+                                </div>
+                            </div>
+
+                            {{#ifCond 'B02' 'notIndexOf' pd.prdType}}
+                                <div class="col thumb-col">                                        
+                                    {{#each sl.pList as |pl|}}
+                                        <div class="com-product-thumb-hor-1">
+                                            <span class="thumb-product thumb-product-xs">
+                                                <span class="thumb-product-img">
+                                                    <img loading="lazy" width="100" height="100" src="{{getApiCdn pl.img}}" alt="{{pl.bnfDesc}}" />
+                                                </span>
+                                                <span class="badge-product-num-2">{{ifCondReturn 'B03,C02,C04,C06,C08,D02,D03' 'indexOf' pd.prdType '옵션' '구성'}} {{math @index '+' 1}}</span>
+                                            </span>
+                                            <span class="info-product-hor">
+                                                <span class="txt-name">{{renderHTML pl.bnfDesc}}</span>
+                                                <span class="txt-price">
+                                                    {{#ifCond 'B03,B04,B05' 'indexOf' pd.prdType}}                                                        
+                                                        {{#ifCond pl.fstScbDcYn '===' 'Y'}}
+                                                            <span class="txt-string-blue">첫 구독</span>
+                                                            <span class="txt-price-sale">{{currencyComma pl.fstScbDcPrc}}원</span>
+                                                        {{else}}
+                                                            <span class="txt-price-sale">{{currencyComma pl.amt}}원</span>
+                                                        {{/ifCond}}
+                                                        {{#if pl.scbPayTrm}}
+                                                            <span class="txt-period">/ {{pl.scbPayTrm}}</span>
+                                                        {{/if}}                                                            
+                                                    {{else}}
+                                                        {{#ifCond '03,04' 'indexOf' sl.bnfTyp}}
+                                                            {{#ifCond '0' '===' pl.addBillAmt}}
+                                                                <span class="txt-price-sale gray">+{{pl.addBillAmt}}원</span>
+                                                            {{else}}
+                                                                {{#ifCond pd.prdType '===' 'D03'}}
+                                                                <span class="txt-price-sale">{{currencyComma pl.amt}}원</span>                                                                    
+                                                                {{else}}   
+                                                                <span class="txt-price-sale">+{{currencyComma pl.addBillAmt}}원</span>
+                                                                {{/ifCond}} 
+                                                            {{/ifCond}}
+                                                        {{/ifCond}}
+                                                    {{/ifCond}}
+                                                </span>
+                                            </span>
+                                            {{#ifCond 'B03,D02,D03' 'indexOf' pd.prdType}}
+                                                <button class="btn-size btn-small bg-stroke" id="product-detail-gp1SelectBtn-{{pl.compPrdId}}" value="{{pl.compPrdId}}">
+                                                    <span>선택</span>
+                                                </button>
+                                            {{/ifCond}}
+                                            <a href="/product/detail/slot?prdId={{pl.compPrdId}}" class="inner-link"></a>
+                                        </div>
+                                    {{/each}}
+                                </div>
+                                {{#ifCond 'D02,D03' 'indexOf' pd.prdType}}
+                                    {{#ifCond  sl.pList.length '>' 3}}
+                                    <a class="btn-txt-arrow btn-all" id="gotoAllBtn">
+                                        <span class="row">
+                                            <span>전체 보기</span>
+                                            <span class="ico ico-arrow-small right"></span>
+                                        </span>
+                                    </a>                                    
+                                    {{/ifCond}}
+                                {{/ifCond}}
+                            {{/ifCond}}
+
+                        {{/if}}
+                    {{/with}}
+                    <!--// 기본상품 영역-->
+
+                    <!--  추가상품 영역-->
+                    {{#with pd.compPrd.addSlotList as |asl|}}
+                        {{#if asl}}
+                            <!-- (N개 표기)-->
+                            {{#ifCond 'C03,C04' 'indexOf' pd.prdType}}
+                                <div class="plus-bg">
+                                    <img loading="lazy" width="100" height="100" src="https://stg-cdn.sktuniverse.co.kr/m/image/details/img-div-more.png" alt="">
+                                </div>
+                                <div class="product-title">
+                                    <div class="txt-title">
+                                        <div class="txt">추가 상품</div>
+                                        <span class="txt-sub tooltip-container tooltip-white">
+                                            <span class="inner">
+                                                {{asl.selectCntText}}                                                                                                   
+                                            </span>
+                                            {{#xif asl "asl.bnfTyp === '04' && asl.basBnfPrdCnt > '0'"}}                                                    
+                                                <span class="ico ico-info-stroke tooltip-btn"></span>
+                                                <div class="tooltip">
+                                                    <span class="tooltip-inner">
+                                                        {{asl.basBnfPrdCnt}}개까지 기본 선택이며, 더 고르실 경우 추가되는 상품마다 추가 요금 {{currencyComma asl.addStrdAmt}}원이 발생합니다.
+                                                    </span>
+                                                </div>                                                    
+                                            {{/xif}}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="product-wrap-inner ico-num-wrap">
+                                    <div class="con-ico-num">
+                                        <div class="row">
+                                            <div class="list-ico row">
+                                                {{#each asl.pList as |pl|}}
+                                                    <span class="tmp-logo-img">
+                                                            <img loading="lazy" width="100" height="100" src="{{getApiCdn pl.brandImg}}" alt="">
+                                                        </span>
+                                                {{/each}}
+                                            </div>
+                                            <button class="btn-med-ico">
+                                                <!-- <span class="ico ico-plus white"></span> -->
+                                                <span>+ {{pd.compPrd.addSlotListCnt}}개</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            {{/ifCond}}
+                            <!--// (N개 표기)-->
+
+                            <!-- (N개 표기 X)-->
+                            {{#ifCond 'C05,C06,C07,C08' 'indexOf' pd.prdType}}                                    
+                                <div class="plus-bg">
+                                    <img loading="lazy" width="100" height="100" src="https://stg-cdn.sktuniverse.co.kr/m/image/details/img-div-more.png" alt="">
+                                </div>
+                                <div class="product-title">
+                                    <div class="txt-title">
+                                        <div class="txt">추가 상품</div>
+                                        <span class="txt-sub tooltip-container tooltip-white">
+                                            <span class="inner">
+                                                <span>기본 상품과 함께 구독할 수 있어요</span>
+                                            </span>
+                                            <span class="ico ico-info-stroke tooltip-btn" id="toolTip" style="display:none"></span>
+                                            <div class="tooltip">
+                                                <span class="tooltip-inner">{{asl.basBnfPrdCnt}}개까지 기본 선택이며, 추가 선택 시 {{currencyComma asl.addStrdAmt}}원이 추가됩니다.</span>
+                                            </div>                                                    
+                                        </span>
+                                    </div>
+                                </div>
+                                {{#each asl.pList as |pl|}}
+                                    <div class="col thumb-col">
+                                        <div class="com-product-thumb-hor-1">
+                                            <span class="thumb-product thumb-product-xs">
+                                                <span class="thumb-product-img">
+                                                    <img loading="lazy" width="100" height="100" src="{{getApiCdn pl.img}}" alt="{{pl.bnfDesc}}">
+                                                </span>
+                                            </span>
+                                            <span class="info-product-hor">
+                                                <span class="txt-name">{{pl.bnfDesc}}</span>
+                                            </span>
+                                            <a href="/product/detail/slot?prdId={{pl.compPrdId}}" class="inner-link"></a>
+                                        </div>
+                                    </div>
+                                {{/each}}                                    
+                            {{/ifCond}}
+                            <!--// (N개 표기 X)-->
+                        {{/if}}
+                    {{/with}}
+                    <!--// 추가상품 영역-->
+
+                    <!-- 추천 상품 영역-->
+                    {{#ifCond 'B01,B02,C03,C04' 'indexOf' pd.prdType}}                            
+                        <div class="cut-bg" style="display:none">
+                            <img loading="lazy" width="100" height="100" src="https://stg-cdn.sktuniverse.co.kr/m/image/details/img-tap.png" alt="">
+                        </div>
+                        <div class="product-wrap-inner ai-pick" id="aiPickTtlNm" style="display:none">
+                            <div class="row row-ai">
+                                <span class="ico ico-ai"></span>
+                                <span class="row txt-sub">
+                                    <span>고객님께 추천하는 상품</span>
+                                </span>
+                            </div>
+                            <div class="col" id="aiPickList">                            
+                            </div>
+                        </div>                            
+                    {{/ifCond}}
+                    <!--// 추천 상품 영역-->
+                </div>
+            </div>
+        </div>        
+    {{/with}}
+{{/ifCond}}
+
+{{#if data.bannerInfo}}
+<!-- 마케팅/콘텐츠배너 -->
+<div id="maketingBanner">
+    {{#each data.bannerInfo.bnrList as |rl index|}}
+        {{#ifCond index '===' 0}}
+            {{#ifCond rl.useClCd '===' 'Y'}}
+            <a class="banner-detail-contents" id="bannerDetailContents" href="javascript:void(0);" pgtypcd="{{rl.pgTypCd}}" lndUrl="{{rl.bnrLnkUrl}}">
+                <img src="{{getApiCdn rl.bnrImgFileUrl}}" alt="{{rl.pgTypCd}}">
+            </a>
+            {{/ifCond}}
+        {{/ifCond}}
+    {{/each}}            
+</div>
+<!--// 마케팅/콘텐츠배너 -->
+{{/if}}
+
+</script>
+<script id="divArea2-template" type="text/x-handlebars-template">
+{{#ifCond 'A01,A02,D01' 'notIndexOf' data.prodDetail.prdType}}
+    {{#with data.prodDetail as |pd|}}        
+        <div class="card-product {{#ifCond 'D02,D03' 'notIndexOf' pd.prdType}}card-product-basic-more{{else}}card-product-group{{/ifCond}}">
+            <div class="main-txt-title"> 
+                <div class="txt-title">
+                    {{#ifCond 'B04,B05,C01,C05' 'indexOf' pd.prdType}}
+                        한 번에 모두<br/>
+                        구독할 수 있어요
+                    {{else ifCond 'B03,C02,C03,C04,C06,C07,C08' 'indexOf' pd.prdType}}
+                        구독할 상품을<br/>
+                        선택해 주세요
+                    {{else ifCond 'B02' 'indexOf' pd.prdType}}
+                        함께 이용할 혜택을<br/>
+                        선택해주세요
+                    {{else ifCond 'D02,D03' 'indexOf' pd.prdType}}                            
+                        신청할 상품 1개를<br/>
+                        선택해 주세요 
+                    {{/ifCond}}
+                </div>
+            </div>
+            <div class="com-product-container">
+                <div class="com-product-wrap {{#ifCond 'D02,D03' 'notIndexOf' pd.prdType}}no-gap{{/ifCond}}">
+                    <!-- 기본상품 영역-->
+                    {{#with pd.compPrd.slotList as |sl|}}
+                        {{#if sl.pList}}
+                            <div class="product-title {{ifCondReturn 'B02' '===' pd.prdType 'no-icon-wrap' ''}}">
+                                <div class="txt-title">
+                                    <div class="txt">{{renderHTML pd.prdTxt}}</div>
+                                    <span class="txt-sub tooltip-container tooltip-white">
+                                        <span class="inner">
+                                            <span>{{sl.selectCntText}}</span>
+                                        </span>
+                                        <span class="ico ico-info-stroke tooltip-btn" id="compToolTip" style="display:none"></span>
+                                        <div class="tooltip">
+                                            <span class="tooltip-inner">
+                                                {{sl.basBnfPrdCnt}}개까지 기본 선택이며, 더 고르실 경우 추가되는 상품마다 추가 요금 {{currencyComma sl.addStrdAmt}}원이 발생합니다.
+                                            </span>
+                                        </div>
+                                    </span>
+                                </div>
+                            </div>
+
+                            {{#ifCond 'B02' 'notIndexOf' pd.prdType}}
+                                <div class="col thumb-col">                                        
+                                    {{#each sl.pList as |pl|}}
+                                        <div class="com-product-thumb-hor-1">
+                                            <span class="thumb-product thumb-product-xs">
+                                                <span class="thumb-product-img">
+                                                    <img loading="lazy" width="100" height="100" src="{{getApiCdn pl.img}}" alt="{{pl.bnfDesc}}" />
+                                                </span>
+                                                <span class="badge-product-num-2">{{ifCondReturn 'B03,C02,C04,C06,C08,D02,D03' 'indexOf' pd.prdType '옵션' '구성'}} {{math @index '+' 1}}</span>
+                                            </span>
+                                            <span class="info-product-hor">
+                                                <span class="txt-name">{{renderHTML pl.bnfDesc}}</span>
+                                                <span class="txt-price">
+                                                    {{#ifCond 'B03,B04,B05' 'indexOf' pd.prdType}}                                                        
+                                                        {{#ifCond pl.fstScbDcYn '===' 'Y'}}
+                                                            <span class="txt-string-blue">첫 구독</span>
+                                                            <span class="txt-price-sale">{{currencyComma pl.fstScbDcPrc}}원</span>
+                                                        {{else}}
+                                                            <span class="txt-price-sale">{{currencyComma pl.amt}}원</span>
+                                                        {{/ifCond}}
+                                                        {{#if pl.scbPayTrm}}
+                                                            <span class="txt-period">/ {{pl.scbPayTrm}}</span>
+                                                        {{/if}}                                                            
+                                                    {{else}}
+                                                        {{#ifCond '03,04' 'indexOf' sl.bnfTyp}}
+                                                            {{#ifCond '0' '===' pl.addBillAmt}}
+                                                                <span class="txt-price-sale gray">+{{pl.addBillAmt}}원</span>
+                                                            {{else}}
+                                                                {{#ifCond pd.prdType '===' 'D03'}}
+                                                                <span class="txt-price-sale">{{currencyComma pl.amt}}원</span>                                                                    
+                                                                {{else}}   
+                                                                <span class="txt-price-sale">+{{currencyComma pl.addBillAmt}}원</span>
+                                                                {{/ifCond}} 
+                                                            {{/ifCond}}
+                                                        {{/ifCond}}
+                                                    {{/ifCond}}
+                                                </span>
+                                            </span>
+                                            {{#ifCond 'B03,D02,D03' 'indexOf' pd.prdType}}
+                                                <button class="btn-size btn-small bg-stroke" id="product-detail-gp1SelectBtn-{{pl.compPrdId}}" value="{{pl.compPrdId}}">
+                                                    <span>선택</span>
+                                                </button>
+                                            {{/ifCond}}
+                                            <a href="/product/detail/slot?prdId={{pl.compPrdId}}" class="inner-link"></a>
+                                        </div>
+                                    {{/each}}
+                                </div>
+                                {{#ifCond 'D02,D03' 'indexOf' pd.prdType}}
+                                    {{#ifCond  sl.pList.length '>' 3}}
+                                    <a class="btn-txt-arrow btn-all" id="gotoAllBtn">
+                                        <span class="row">
+                                            <span>전체 보기</span>
+                                            <span class="ico ico-arrow-small right"></span>
+                                        </span>
+                                    </a>                                    
+                                    {{/ifCond}}
+                                {{/ifCond}}
+                            {{/ifCond}}
+
+                        {{/if}}
+                    {{/with}}
+                    <!--// 기본상품 영역-->
+
+                    <!--  추가상품 영역-->
+                    {{#with pd.compPrd.addSlotList as |asl|}}
+                        {{#if asl}}
+                            <!-- (N개 표기)-->
+                            {{#ifCond 'C03,C04' 'indexOf' pd.prdType}}
+                                <div class="plus-bg">
+                                    <img loading="lazy" width="100" height="100" src="https://stg-cdn.sktuniverse.co.kr/m/image/details/img-div-more.png" alt="">
+                                </div>
+                                <div class="product-title">
+                                    <div class="txt-title">
+                                        <div class="txt">추가 상품</div>
+                                        <span class="txt-sub tooltip-container tooltip-white">
+                                            <span class="inner">
+                                                {{asl.selectCntText}}                                                                                                   
+                                            </span>
+                                            {{#xif asl "asl.bnfTyp === '04' && asl.basBnfPrdCnt > '0'"}}                                                    
+                                                <span class="ico ico-info-stroke tooltip-btn"></span>
+                                                <div class="tooltip">
+                                                    <span class="tooltip-inner">
+                                                        {{asl.basBnfPrdCnt}}개까지 기본 선택이며, 더 고르실 경우 추가되는 상품마다 추가 요금 {{currencyComma asl.addStrdAmt}}원이 발생합니다.
+                                                    </span>
+                                                </div>                                                    
+                                            {{/xif}}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="product-wrap-inner ico-num-wrap">
+                                    <div class="con-ico-num">
+                                        <div class="row">
+                                            <div class="list-ico row">
+                                                {{#each asl.pList as |pl|}}
+                                                    <span class="tmp-logo-img">
+                                                            <img loading="lazy" width="100" height="100" src="{{getApiCdn pl.brandImg}}" alt="">
+                                                        </span>
+                                                {{/each}}
+                                            </div>
+                                            <button class="btn-med-ico">
+                                                <!-- <span class="ico ico-plus white"></span> -->
+                                                <span>+ {{pd.compPrd.addSlotListCnt}}개</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            {{/ifCond}}
+                            <!--// (N개 표기)-->
+
+                            <!-- (N개 표기 X)-->
+                            {{#ifCond 'C05,C06,C07,C08' 'indexOf' pd.prdType}}                                    
+                                <div class="plus-bg">
+                                    <img loading="lazy" width="100" height="100" src="https://stg-cdn.sktuniverse.co.kr/m/image/details/img-div-more.png" alt="">
+                                </div>
+                                <div class="product-title">
+                                    <div class="txt-title">
+                                        <div class="txt">추가 상품</div>
+                                        <span class="txt-sub tooltip-container tooltip-white">
+                                            <span class="inner">
+                                                <span>기본 상품과 함께 구독할 수 있어요</span>
+                                            </span>
+                                            <span class="ico ico-info-stroke tooltip-btn" id="toolTip" style="display:none"></span>
+                                            <div class="tooltip">
+                                                <span class="tooltip-inner">{{asl.basBnfPrdCnt}}개까지 기본 선택이며, 추가 선택 시 {{currencyComma asl.addStrdAmt}}원이 추가됩니다.</span>
+                                            </div>                                                    
+                                        </span>
+                                    </div>
+                                </div>
+                                {{#each asl.pList as |pl|}}
+                                    <div class="col thumb-col">
+                                        <div class="com-product-thumb-hor-1">
+                                            <span class="thumb-product thumb-product-xs">
+                                                <span class="thumb-product-img">
+                                                    <img loading="lazy" width="100" height="100" src="{{getApiCdn pl.img}}" alt="{{pl.bnfDesc}}">
+                                                </span>
+                                            </span>
+                                            <span class="info-product-hor">
+                                                <span class="txt-name">{{pl.bnfDesc}}</span>
+                                            </span>
+                                            <a href="/product/detail/slot?prdId={{pl.compPrdId}}" class="inner-link"></a>
+                                        </div>
+                                    </div>
+                                {{/each}}                                    
+                            {{/ifCond}}
+                            <!--// (N개 표기 X)-->
+                        {{/if}}
+                    {{/with}}
+                    <!--// 추가상품 영역-->
+
+                    <!-- 추천 상품 영역-->
+                    {{#ifCond 'B01,B02,C03,C04' 'indexOf' pd.prdType}}                            
+                        <div class="cut-bg" style="display:none">
+                            <img loading="lazy" width="100" height="100" src="https://stg-cdn.sktuniverse.co.kr/m/image/details/img-tap.png" alt="">
+                        </div>
+                        <div class="product-wrap-inner ai-pick" id="aiPickTtlNm" style="display:none">
+                            <div class="row row-ai">
+                                <span class="ico ico-ai"></span>
+                                <span class="row txt-sub">
+                                    <span>고객님께 추천하는 상품</span>
+                                </span>
+                            </div>
+                            <div class="col" id="aiPickList">                            
+                            </div>
+                        </div>                            
+                    {{/ifCond}}
+                    <!--// 추천 상품 영역-->
+                </div>
+            </div>
+        </div>        
+    {{/with}}
+{{/ifCond}}
+
+{{#if data.bannerInfo}}
+<!-- 마케팅/콘텐츠배너 -->
+<div id="maketingBanner">
+    {{#each data.bannerInfo.bnrList as |rl index|}}
+        {{#ifCond index '===' 0}}
+            {{#ifCond rl.useClCd '===' 'Y'}}
+            <a class="banner-detail-contents" id="bannerDetailContents" href="javascript:void(0);" pgtypcd="{{rl.pgTypCd}}" lndUrl="{{rl.bnrLnkUrl}}">
+                <img src="{{getApiCdn rl.bnrImgFileUrl}}" alt="{{rl.pgTypCd}}">
+            </a>
+            {{/ifCond}}
+        {{/ifCond}}
+    {{/each}}            
+</div>
+<!--// 마케팅/콘텐츠배너 -->
+{{/if}}
+
+</script>
+<script id="divArea2-template" type="text/x-handlebars-template">
+{{#ifCond 'A01,A02,D01' 'notIndexOf' data.prodDetail.prdType}}
+    {{#with data.prodDetail as |pd|}}        
+        <div class="card-product {{#ifCond 'D02,D03' 'notIndexOf' pd.prdType}}card-product-basic-more{{else}}card-product-group{{/ifCond}}">
+            <div class="main-txt-title"> 
+                <div class="txt-title">
+                    {{#ifCond 'B04,B05,C01,C05' 'indexOf' pd.prdType}}
+                        한 번에 모두<br/>
+                        구독할 수 있어요
+                    {{else ifCond 'B03,C02,C03,C04,C06,C07,C08' 'indexOf' pd.prdType}}
+                        구독할 상품을<br/>
+                        선택해 주세요
+                    {{else ifCond 'B02' 'indexOf' pd.prdType}}
+                        함께 이용할 혜택을<br/>
+                        선택해주세요
+                    {{else ifCond 'D02,D03' 'indexOf' pd.prdType}}                            
+                        신청할 상품 1개를<br/>
+                        선택해 주세요 
+                    {{/ifCond}}
+                </div>
+            </div>
+            <div class="com-product-container">
+                <div class="com-product-wrap {{#ifCond 'D02,D03' 'notIndexOf' pd.prdType}}no-gap{{/ifCond}}">
+                    <!-- 기본상품 영역-->
+                    {{#with pd.compPrd.slotList as |sl|}}
+                        {{#if sl.pList}}
+                            <div class="product-title {{ifCondReturn 'B02' '===' pd.prdType 'no-icon-wrap' ''}}">
+                                <div class="txt-title">
+                                    <div class="txt">{{renderHTML pd.prdTxt}}</div>
+                                    <span class="txt-sub tooltip-container tooltip-white">
+                                        <span class="inner">
+                                            <span>{{sl.selectCntText}}</span>
+                                        </span>
+                                        <span class="ico ico-info-stroke tooltip-btn" id="compToolTip" style="display:none"></span>
+                                        <div class="tooltip">
+                                            <span class="tooltip-inner">
+                                                {{sl.basBnfPrdCnt}}개까지 기본 선택이며, 더 고르실 경우 추가되는 상품마다 추가 요금 {{currencyComma sl.addStrdAmt}}원이 발생합니다.
+                                            </span>
+                                        </div>
+                                    </span>
+                                </div>
+                            </div>
+
+                            {{#ifCond 'B02' 'notIndexOf' pd.prdType}}
+                                <div class="col thumb-col">                                        
+                                    {{#each sl.pList as |pl|}}
+                                        <div class="com-product-thumb-hor-1">
+                                            <span class="thumb-product thumb-product-xs">
+                                                <span class="thumb-product-img">
+                                                    <img loading="lazy" width="100" height="100" src="{{getApiCdn pl.img}}" alt="{{pl.bnfDesc}}" />
+                                                </span>
+                                                <span class="badge-product-num-2">{{ifCondReturn 'B03,C02,C04,C06,C08,D02,D03' 'indexOf' pd.prdType '옵션' '구성'}} {{math @index '+' 1}}</span>
+                                            </span>
+                                            <span class="info-product-hor">
+                                                <span class="txt-name">{{renderHTML pl.bnfDesc}}</span>
+                                                <span class="txt-price">
+                                                    {{#ifCond 'B03,B04,B05' 'indexOf' pd.prdType}}                                                        
+                                                        {{#ifCond pl.fstScbDcYn '===' 'Y'}}
+                                                            <span class="txt-string-blue">첫 구독</span>
+                                                            <span class="txt-price-sale">{{currencyComma pl.fstScbDcPrc}}원</span>
+                                                        {{else}}
+                                                            <span class="txt-price-sale">{{currencyComma pl.amt}}원</span>
+                                                        {{/ifCond}}
+                                                        {{#if pl.scbPayTrm}}
+                                                            <span class="txt-period">/ {{pl.scbPayTrm}}</span>
+                                                        {{/if}}                                                            
+                                                    {{else}}
+                                                        {{#ifCond '03,04' 'indexOf' sl.bnfTyp}}
+                                                            {{#ifCond '0' '===' pl.addBillAmt}}
+                                                                <span class="txt-price-sale gray">+{{pl.addBillAmt}}원</span>
+                                                            {{else}}
+                                                                {{#ifCond pd.prdType '===' 'D03'}}
+                                                                <span class="txt-price-sale">{{currencyComma pl.amt}}원</span>                                                                    
+                                                                {{else}}   
+                                                                <span class="txt-price-sale">+{{currencyComma pl.addBillAmt}}원</span>
+                                                                {{/ifCond}} 
+                                                            {{/ifCond}}
+                                                        {{/ifCond}}
+                                                    {{/ifCond}}
+                                                </span>
+                                            </span>
+                                            {{#ifCond 'B03,D02,D03' 'indexOf' pd.prdType}}
+                                                <button class="btn-size btn-small bg-stroke" id="product-detail-gp1SelectBtn-{{pl.compPrdId}}" value="{{pl.compPrdId}}">
+                                                    <span>선택</span>
+                                                </button>
+                                            {{/ifCond}}
+                                            <a href="/product/detail/slot?prdId={{pl.compPrdId}}" class="inner-link"></a>
+                                        </div>
+                                    {{/each}}
+                                </div>
+                                {{#ifCond 'D02,D03' 'indexOf' pd.prdType}}
+                                    {{#ifCond  sl.pList.length '>' 3}}
+                                    <a class="btn-txt-arrow btn-all" id="gotoAllBtn">
+                                        <span class="row">
+                                            <span>전체 보기</span>
+                                            <span class="ico ico-arrow-small right"></span>
+                                        </span>
+                                    </a>                                    
+                                    {{/ifCond}}
+                                {{/ifCond}}
+                            {{/ifCond}}
+
+                        {{/if}}
+                    {{/with}}
+                    <!--// 기본상품 영역-->
+
+                    <!--  추가상품 영역-->
+                    {{#with pd.compPrd.addSlotList as |asl|}}
+                        {{#if asl}}
+                            <!-- (N개 표기)-->
+                            {{#ifCond 'C03,C04' 'indexOf' pd.prdType}}
+                                <div class="plus-bg">
+                                    <img loading="lazy" width="100" height="100" src="https://stg-cdn.sktuniverse.co.kr/m/image/details/img-div-more.png" alt="">
+                                </div>
+                                <div class="product-title">
+                                    <div class="txt-title">
+                                        <div class="txt">추가 상품</div>
+                                        <span class="txt-sub tooltip-container tooltip-white">
+                                            <span class="inner">
+                                                {{asl.selectCntText}}                                                                                                   
+                                            </span>
+                                            {{#xif asl "asl.bnfTyp === '04' && asl.basBnfPrdCnt > '0'"}}                                                    
+                                                <span class="ico ico-info-stroke tooltip-btn"></span>
+                                                <div class="tooltip">
+                                                    <span class="tooltip-inner">
+                                                        {{asl.basBnfPrdCnt}}개까지 기본 선택이며, 더 고르실 경우 추가되는 상품마다 추가 요금 {{currencyComma asl.addStrdAmt}}원이 발생합니다.
+                                                    </span>
+                                                </div>                                                    
+                                            {{/xif}}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="product-wrap-inner ico-num-wrap">
+                                    <div class="con-ico-num">
+                                        <div class="row">
+                                            <div class="list-ico row">
+                                                {{#each asl.pList as |pl|}}
+                                                    <span class="tmp-logo-img">
+                                                            <img loading="lazy" width="100" height="100" src="{{getApiCdn pl.brandImg}}" alt="">
+                                                        </span>
+                                                {{/each}}
+                                            </div>
+                                            <button class="btn-med-ico">
+                                                <!-- <span class="ico ico-plus white"></span> -->
+                                                <span>+ {{pd.compPrd.addSlotListCnt}}개</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            {{/ifCond}}
+                            <!--// (N개 표기)-->
+
+                            <!-- (N개 표기 X)-->
+                            {{#ifCond 'C05,C06,C07,C08' 'indexOf' pd.prdType}}                                    
+                                <div class="plus-bg">
+                                    <img loading="lazy" width="100" height="100" src="https://stg-cdn.sktuniverse.co.kr/m/image/details/img-div-more.png" alt="">
+                                </div>
+                                <div class="product-title">
+                                    <div class="txt-title">
+                                        <div class="txt">추가 상품</div>
+                                        <span class="txt-sub tooltip-container tooltip-white">
+                                            <span class="inner">
+                                                <span>기본 상품과 함께 구독할 수 있어요</span>
+                                            </span>
+                                            <span class="ico ico-info-stroke tooltip-btn" id="toolTip" style="display:none"></span>
+                                            <div class="tooltip">
+                                                <span class="tooltip-inner">{{asl.basBnfPrdCnt}}개까지 기본 선택이며, 추가 선택 시 {{currencyComma asl.addStrdAmt}}원이 추가됩니다.</span>
+                                            </div>                                                    
+                                        </span>
+                                    </div>
+                                </div>
+                                {{#each asl.pList as |pl|}}
+                                    <div class="col thumb-col">
+                                        <div class="com-product-thumb-hor-1">
+                                            <span class="thumb-product thumb-product-xs">
+                                                <span class="thumb-product-img">
+                                                    <img loading="lazy" width="100" height="100" src="{{getApiCdn pl.img}}" alt="{{pl.bnfDesc}}">
+                                                </span>
+                                            </span>
+                                            <span class="info-product-hor">
+                                                <span class="txt-name">{{pl.bnfDesc}}</span>
+                                            </span>
+                                            <a href="/product/detail/slot?prdId={{pl.compPrdId}}" class="inner-link"></a>
+                                        </div>
+                                    </div>
+                                {{/each}}                                    
+                            {{/ifCond}}
+                            <!--// (N개 표기 X)-->
+                        {{/if}}
+                    {{/with}}
+                    <!--// 추가상품 영역-->
+
+                    <!-- 추천 상품 영역-->
+                    {{#ifCond 'B01,B02,C03,C04' 'indexOf' pd.prdType}}                            
+                        <div class="cut-bg" style="display:none">
+                            <img loading="lazy" width="100" height="100" src="https://stg-cdn.sktuniverse.co.kr/m/image/details/img-tap.png" alt="">
+                        </div>
+                        <div class="product-wrap-inner ai-pick" id="aiPickTtlNm" style="display:none">
+                            <div class="row row-ai">
+                                <span class="ico ico-ai"></span>
+                                <span class="row txt-sub">
+                                    <span>고객님께 추천하는 상품</span>
+                                </span>
+                            </div>
+                            <div class="col" id="aiPickList">                            
+                            </div>
+                        </div>                            
+                    {{/ifCond}}
+                    <!--// 추천 상품 영역-->
+                </div>
+            </div>
+        </div>        
+    {{/with}}
+{{/ifCond}}
+
+{{#if data.bannerInfo}}
+<!-- 마케팅/콘텐츠배너 -->
+<div id="maketingBanner">
+    {{#each data.bannerInfo.bnrList as |rl index|}}
+        {{#ifCond index '===' 0}}
+            {{#ifCond rl.useClCd '===' 'Y'}}
+            <a class="banner-detail-contents" id="bannerDetailContents" href="javascript:void(0);" pgtypcd="{{rl.pgTypCd}}" lndUrl="{{rl.bnrLnkUrl}}">
+                <img src="{{getApiCdn rl.bnrImgFileUrl}}" alt="{{rl.pgTypCd}}">
+            </a>
+            {{/ifCond}}
+        {{/ifCond}}
+    {{/each}}            
+</div>
+<!--// 마케팅/콘텐츠배너 -->
+{{/if}}
+
+</script>
+<script id="divArea2-template" type="text/x-handlebars-template">
+{{#ifCond 'A01,A02,D01' 'notIndexOf' data.prodDetail.prdType}}
+    {{#with data.prodDetail as |pd|}}        
+        <div class="card-product {{#ifCond 'D02,D03' 'notIndexOf' pd.prdType}}card-product-basic-more{{else}}card-product-group{{/ifCond}}">
+            <div class="main-txt-title"> 
+                <div class="txt-title">
+                    {{#ifCond 'B04,B05,C01,C05' 'indexOf' pd.prdType}}
+                        한 번에 모두<br/>
+                        구독할 수 있어요
+                    {{else ifCond 'B03,C02,C03,C04,C06,C07,C08' 'indexOf' pd.prdType}}
+                        구독할 상품을<br/>
+                        선택해 주세요
+                    {{else ifCond 'B02' 'indexOf' pd.prdType}}
+                        함께 이용할 혜택을<br/>
+                        선택해주세요
+                    {{else ifCond 'D02,D03' 'indexOf' pd.prdType}}                            
+                        신청할 상품 1개를<br/>
+                        선택해 주세요 
+                    {{/ifCond}}
+                </div>
+            </div>
+            <div class="com-product-container">
+                <div class="com-product-wrap {{#ifCond 'D02,D03' 'notIndexOf' pd.prdType}}no-gap{{/ifCond}}">
+                    <!-- 기본상품 영역-->
+                    {{#with pd.compPrd.slotList as |sl|}}
+                        {{#if sl.pList}}
+                            <div class="product-title {{ifCondReturn 'B02' '===' pd.prdType 'no-icon-wrap' ''}}">
+                                <div class="txt-title">
+                                    <div class="txt">{{renderHTML pd.prdTxt}}</div>
+                                    <span class="txt-sub tooltip-container tooltip-white">
+                                        <span class="inner">
+                                            <span>{{sl.selectCntText}}</span>
+                                        </span>
+                                        <span class="ico ico-info-stroke tooltip-btn" id="compToolTip" style="display:none"></span>
+                                        <div class="tooltip">
+                                            <span class="tooltip-inner">
+                                                {{sl.basBnfPrdCnt}}개까지 기본 선택이며, 더 고르실 경우 추가되는 상품마다 추가 요금 {{currencyComma sl.addStrdAmt}}원이 발생합니다.
+                                            </span>
+                                        </div>
+                                    </span>
+                                </div>
+                            </div>
+
+                            {{#ifCond 'B02' 'notIndexOf' pd.prdType}}
+                                <div class="col thumb-col">                                        
+                                    {{#each sl.pList as |pl|}}
+                                        <div class="com-product-thumb-hor-1">
+                                            <span class="thumb-product thumb-product-xs">
+                                                <span class="thumb-product-img">
+                                                    <img loading="lazy" width="100" height="100" src="{{getApiCdn pl.img}}" alt="{{pl.bnfDesc}}" />
+                                                </span>
+                                                <span class="badge-product-num-2">{{ifCondReturn 'B03,C02,C04,C06,C08,D02,D03' 'indexOf' pd.prdType '옵션' '구성'}} {{math @index '+' 1}}</span>
+                                            </span>
+                                            <span class="info-product-hor">
+                                                <span class="txt-name">{{renderHTML pl.bnfDesc}}</span>
+                                                <span class="txt-price">
+                                                    {{#ifCond 'B03,B04,B05' 'indexOf' pd.prdType}}                                                        
+                                                        {{#ifCond pl.fstScbDcYn '===' 'Y'}}
+                                                            <span class="txt-string-blue">첫 구독</span>
+                                                            <span class="txt-price-sale">{{currencyComma pl.fstScbDcPrc}}원</span>
+                                                        {{else}}
+                                                            <span class="txt-price-sale">{{currencyComma pl.amt}}원</span>
+                                                        {{/ifCond}}
+                                                        {{#if pl.scbPayTrm}}
+                                                            <span class="txt-period">/ {{pl.scbPayTrm}}</span>
+                                                        {{/if}}                                                            
+                                                    {{else}}
+                                                        {{#ifCond '03,04' 'indexOf' sl.bnfTyp}}
+                                                            {{#ifCond '0' '===' pl.addBillAmt}}
+                                                                <span class="txt-price-sale gray">+{{pl.addBillAmt}}원</span>
+                                                            {{else}}
+                                                                {{#ifCond pd.prdType '===' 'D03'}}
+                                                                <span class="txt-price-sale">{{currencyComma pl.amt}}원</span>                                                                    
+                                                                {{else}}   
+                                                                <span class="txt-price-sale">+{{currencyComma pl.addBillAmt}}원</span>
+                                                                {{/ifCond}} 
+                                                            {{/ifCond}}
+                                                        {{/ifCond}}
+                                                    {{/ifCond}}
+                                                </span>
+                                            </span>
+                                            {{#ifCond 'B03,D02,D03' 'indexOf' pd.prdType}}
+                                                <button class="btn-size btn-small bg-stroke" id="product-detail-gp1SelectBtn-{{pl.compPrdId}}" value="{{pl.compPrdId}}">
+                                                    <span>선택</span>
+                                                </button>
+                                            {{/ifCond}}
+                                            <a href="/product/detail/slot?prdId={{pl.compPrdId}}" class="inner-link"></a>
+                                        </div>
+                                    {{/each}}
+                                </div>
+                                {{#ifCond 'D02,D03' 'indexOf' pd.prdType}}
+                                    {{#ifCond  sl.pList.length '>' 3}}
+                                    <a class="btn-txt-arrow btn-all" id="gotoAllBtn">
+                                        <span class="row">
+                                            <span>전체 보기</span>
+                                            <span class="ico ico-arrow-small right"></span>
+                                        </span>
+                                    </a>                                    
+                                    {{/ifCond}}
+                                {{/ifCond}}
+                            {{/ifCond}}
+
+                        {{/if}}
+                    {{/with}}
+                    <!--// 기본상품 영역-->
+
+                    <!--  추가상품 영역-->
+                    {{#with pd.compPrd.addSlotList as |asl|}}
+                        {{#if asl}}
+                            <!-- (N개 표기)-->
+                            {{#ifCond 'C03,C04' 'indexOf' pd.prdType}}
+                                <div class="plus-bg">
+                                    <img loading="lazy" width="100" height="100" src="https://stg-cdn.sktuniverse.co.kr/m/image/details/img-div-more.png" alt="">
+                                </div>
+                                <div class="product-title">
+                                    <div class="txt-title">
+                                        <div class="txt">추가 상품</div>
+                                        <span class="txt-sub tooltip-container tooltip-white">
+                                            <span class="inner">
+                                                {{asl.selectCntText}}                                                                                                   
+                                            </span>
+                                            {{#xif asl "asl.bnfTyp === '04' && asl.basBnfPrdCnt > '0'"}}                                                    
+                                                <span class="ico ico-info-stroke tooltip-btn"></span>
+                                                <div class="tooltip">
+                                                    <span class="tooltip-inner">
+                                                        {{asl.basBnfPrdCnt}}개까지 기본 선택이며, 더 고르실 경우 추가되는 상품마다 추가 요금 {{currencyComma asl.addStrdAmt}}원이 발생합니다.
+                                                    </span>
+                                                </div>                                                    
+                                            {{/xif}}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="product-wrap-inner ico-num-wrap">
+                                    <div class="con-ico-num">
+                                        <div class="row">
+                                            <div class="list-ico row">
+                                                {{#each asl.pList as |pl|}}
+                                                    <span class="tmp-logo-img">
+                                                            <img loading="lazy" width="100" height="100" src="{{getApiCdn pl.brandImg}}" alt="">
+                                                        </span>
+                                                {{/each}}
+                                            </div>
+                                            <button class="btn-med-ico">
+                                                <!-- <span class="ico ico-plus white"></span> -->
+                                                <span>+ {{pd.compPrd.addSlotListCnt}}개</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            {{/ifCond}}
+                            <!--// (N개 표기)-->
+
+                            <!-- (N개 표기 X)-->
+                            {{#ifCond 'C05,C06,C07,C08' 'indexOf' pd.prdType}}                                    
+                                <div class="plus-bg">
+                                    <img loading="lazy" width="100" height="100" src="https://stg-cdn.sktuniverse.co.kr/m/image/details/img-div-more.png" alt="">
+                                </div>
+                                <div class="product-title">
+                                    <div class="txt-title">
+                                        <div class="txt">추가 상품</div>
+                                        <span class="txt-sub tooltip-container tooltip-white">
+                                            <span class="inner">
+                                                <span>기본 상품과 함께 구독할 수 있어요</span>
+                                            </span>
+                                            <span class="ico ico-info-stroke tooltip-btn" id="toolTip" style="display:none"></span>
+                                            <div class="tooltip">
+                                                <span class="tooltip-inner">{{asl.basBnfPrdCnt}}개까지 기본 선택이며, 추가 선택 시 {{currencyComma asl.addStrdAmt}}원이 추가됩니다.</span>
+                                            </div>                                                    
+                                        </span>
+                                    </div>
+                                </div>
+                                {{#each asl.pList as |pl|}}
+                                    <div class="col thumb-col">
+                                        <div class="com-product-thumb-hor-1">
+                                            <span class="thumb-product thumb-product-xs">
+                                                <span class="thumb-product-img">
+                                                    <img loading="lazy" width="100" height="100" src="{{getApiCdn pl.img}}" alt="{{pl.bnfDesc}}">
+                                                </span>
+                                            </span>
+                                            <span class="info-product-hor">
+                                                <span class="txt-name">{{pl.bnfDesc}}</span>
+                                            </span>
+                                            <a href="/product/detail/slot?prdId={{pl.compPrdId}}" class="inner-link"></a>
+                                        </div>
+                                    </div>
+                                {{/each}}                                    
+                            {{/ifCond}}
+                            <!--// (N개 표기 X)-->
+                        {{/if}}
+                    {{/with}}
+                    <!--// 추가상품 영역-->
+
+                    <!-- 추천 상품 영역-->
+                    {{#ifCond 'B01,B02,C03,C04' 'indexOf' pd.prdType}}                            
+                        <div class="cut-bg" style="display:none">
+                            <img loading="lazy" width="100" height="100" src="https://stg-cdn.sktuniverse.co.kr/m/image/details/img-tap.png" alt="">
+                        </div>
+                        <div class="product-wrap-inner ai-pick" id="aiPickTtlNm" style="display:none">
+                            <div class="row row-ai">
+                                <span class="ico ico-ai"></span>
+                                <span class="row txt-sub">
+                                    <span>고객님께 추천하는 상품</span>
+                                </span>
+                            </div>
+                            <div class="col" id="aiPickList">                            
+                            </div>
+                        </div>                            
+                    {{/ifCond}}
+                    <!--// 추천 상품 영역-->
+                </div>
+            </div>
+        </div>        
+    {{/with}}
+{{/ifCond}}
+
+{{#if data.bannerInfo}}
+<!-- 마케팅/콘텐츠배너 -->
+<div id="maketingBanner">
+    {{#each data.bannerInfo.bnrList as |rl index|}}
+        {{#ifCond index '===' 0}}
+            {{#ifCond rl.useClCd '===' 'Y'}}
+            <a class="banner-detail-contents" id="bannerDetailContents" href="javascript:void(0);" pgtypcd="{{rl.pgTypCd}}" lndUrl="{{rl.bnrLnkUrl}}">
+                <img src="{{getApiCdn rl.bnrImgFileUrl}}" alt="{{rl.pgTypCd}}">
+            </a>
+            {{/ifCond}}
+        {{/ifCond}}
+    {{/each}}            
+</div>
+<!--// 마케팅/콘텐츠배너 -->
+{{/if}}
+
+</script>
+<script id="divArea2-template" type="text/x-handlebars-template">
+{{#ifCond 'A01,A02,D01' 'notIndexOf' data.prodDetail.prdType}}
+    {{#with data.prodDetail as |pd|}}        
+        <div class="card-product {{#ifCond 'D02,D03' 'notIndexOf' pd.prdType}}card-product-basic-more{{else}}card-product-group{{/ifCond}}">
+            <div class="main-txt-title"> 
+                <div class="txt-title">
+                    {{#ifCond 'B04,B05,C01,C05' 'indexOf' pd.prdType}}
+                        한 번에 모두<br/>
+                        구독할 수 있어요
+                    {{else ifCond 'B03,C02,C03,C04,C06,C07,C08' 'indexOf' pd.prdType}}
+                        구독할 상품을<br/>
+                        선택해 주세요
+                    {{else ifCond 'B02' 'indexOf' pd.prdType}}
+                        함께 이용할 혜택을<br/>
+                        선택해주세요
+                    {{else ifCond 'D02,D03' 'indexOf' pd.prdType}}                            
+                        신청할 상품 1개를<br/>
+                        선택해 주세요 
+                    {{/ifCond}}
+                </div>
+            </div>
+            <div class="com-product-container">
+                <div class="com-product-wrap {{#ifCond 'D02,D03' 'notIndexOf' pd.prdType}}no-gap{{/ifCond}}">
+                    <!-- 기본상품 영역-->
+                    {{#with pd.compPrd.slotList as |sl|}}
+                        {{#if sl.pList}}
+                            <div class="product-title {{ifCondReturn 'B02' '===' pd.prdType 'no-icon-wrap' ''}}">
+                                <div class="txt-title">
+                                    <div class="txt">{{renderHTML pd.prdTxt}}</div>
+                                    <span class="txt-sub tooltip-container tooltip-white">
+                                        <span class="inner">
+                                            <span>{{sl.selectCntText}}</span>
+                                        </span>
+                                        <span class="ico ico-info-stroke tooltip-btn" id="compToolTip" style="display:none"></span>
+                                        <div class="tooltip">
+                                            <span class="tooltip-inner">
+                                                {{sl.basBnfPrdCnt}}개까지 기본 선택이며, 더 고르실 경우 추가되는 상품마다 추가 요금 {{currencyComma sl.addStrdAmt}}원이 발생합니다.
+                                            </span>
+                                        </div>
+                                    </span>
+                                </div>
+                            </div>
+
+                            {{#ifCond 'B02' 'notIndexOf' pd.prdType}}
+                                <div class="col thumb-col">                                        
+                                    {{#each sl.pList as |pl|}}
+                                        <div class="com-product-thumb-hor-1">
+                                            <span class="thumb-product thumb-product-xs">
+                                                <span class="thumb-product-img">
+                                                    <img loading="lazy" width="100" height="100" src="{{getApiCdn pl.img}}" alt="{{pl.bnfDesc}}" />
+                                                </span>
+                                                <span class="badge-product-num-2">{{ifCondReturn 'B03,C02,C04,C06,C08,D02,D03' 'indexOf' pd.prdType '옵션' '구성'}} {{math @index '+' 1}}</span>
+                                            </span>
+                                            <span class="info-product-hor">
+                                                <span class="txt-name">{{renderHTML pl.bnfDesc}}</span>
+                                                <span class="txt-price">
+                                                    {{#ifCond 'B03,B04,B05' 'indexOf' pd.prdType}}                                                        
+                                                        {{#ifCond pl.fstScbDcYn '===' 'Y'}}
+                                                            <span class="txt-string-blue">첫 구독</span>
+                                                            <span class="txt-price-sale">{{currencyComma pl.fstScbDcPrc}}원</span>
+                                                        {{else}}
+                                                            <span class="txt-price-sale">{{currencyComma pl.amt}}원</span>
+                                                        {{/ifCond}}
+                                                        {{#if pl.scbPayTrm}}
+                                                            <span class="txt-period">/ {{pl.scbPayTrm}}</span>
+                                                        {{/if}}                                                            
+                                                    {{else}}
+                                                        {{#ifCond '03,04' 'indexOf' sl.bnfTyp}}
+                                                            {{#ifCond '0' '===' pl.addBillAmt}}
+                                                                <span class="txt-price-sale gray">+{{pl.addBillAmt}}원</span>
+                                                            {{else}}
+                                                                {{#ifCond pd.prdType '===' 'D03'}}
+                                                                <span class="txt-price-sale">{{currencyComma pl.amt}}원</span>                                                                    
+                                                                {{else}}   
+                                                                <span class="txt-price-sale">+{{currencyComma pl.addBillAmt}}원</span>
+                                                                {{/ifCond}} 
+                                                            {{/ifCond}}
+                                                        {{/ifCond}}
+                                                    {{/ifCond}}
+                                                </span>
+                                            </span>
+                                            {{#ifCond 'B03,D02,D03' 'indexOf' pd.prdType}}
+                                                <button class="btn-size btn-small bg-stroke" id="product-detail-gp1SelectBtn-{{pl.compPrdId}}" value="{{pl.compPrdId}}">
+                                                    <span>선택</span>
+                                                </button>
+                                            {{/ifCond}}
+                                            <a href="/product/detail/slot?prdId={{pl.compPrdId}}" class="inner-link"></a>
+                                        </div>
+                                    {{/each}}
+                                </div>
+                                {{#ifCond 'D02,D03' 'indexOf' pd.prdType}}
+                                    {{#ifCond  sl.pList.length '>' 3}}
+                                    <a class="btn-txt-arrow btn-all" id="gotoAllBtn">
+                                        <span class="row">
+                                            <span>전체 보기</span>
+                                            <span class="ico ico-arrow-small right"></span>
+                                        </span>
+                                    </a>                                    
+                                    {{/ifCond}}
+                                {{/ifCond}}
+                            {{/ifCond}}
+
+                        {{/if}}
+                    {{/with}}
+                    <!--// 기본상품 영역-->
+
+                    <!--  추가상품 영역-->
+                    {{#with pd.compPrd.addSlotList as |asl|}}
+                        {{#if asl}}
+                            <!-- (N개 표기)-->
+                            {{#ifCond 'C03,C04' 'indexOf' pd.prdType}}
+                                <div class="plus-bg">
+                                    <img loading="lazy" width="100" height="100" src="https://stg-cdn.sktuniverse.co.kr/m/image/details/img-div-more.png" alt="">
+                                </div>
+                                <div class="product-title">
+                                    <div class="txt-title">
+                                        <div class="txt">추가 상품</div>
+                                        <span class="txt-sub tooltip-container tooltip-white">
+                                            <span class="inner">
+                                                {{asl.selectCntText}}                                                                                                   
+                                            </span>
+                                            {{#xif asl "asl.bnfTyp === '04' && asl.basBnfPrdCnt > '0'"}}                                                    
+                                                <span class="ico ico-info-stroke tooltip-btn"></span>
+                                                <div class="tooltip">
+                                                    <span class="tooltip-inner">
+                                                        {{asl.basBnfPrdCnt}}개까지 기본 선택이며, 더 고르실 경우 추가되는 상품마다 추가 요금 {{currencyComma asl.addStrdAmt}}원이 발생합니다.
+                                                    </span>
+                                                </div>                                                    
+                                            {{/xif}}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="product-wrap-inner ico-num-wrap">
+                                    <div class="con-ico-num">
+                                        <div class="row">
+                                            <div class="list-ico row">
+                                                {{#each asl.pList as |pl|}}
+                                                    <span class="tmp-logo-img">
+                                                            <img loading="lazy" width="100" height="100" src="{{getApiCdn pl.brandImg}}" alt="">
+                                                        </span>
+                                                {{/each}}
+                                            </div>
+                                            <button class="btn-med-ico">
+                                                <!-- <span class="ico ico-plus white"></span> -->
+                                                <span>+ {{pd.compPrd.addSlotListCnt}}개</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            {{/ifCond}}
+                            <!--// (N개 표기)-->
+
+                            <!-- (N개 표기 X)-->
+                            {{#ifCond 'C05,C06,C07,C08' 'indexOf' pd.prdType}}                                    
+                                <div class="plus-bg">
+                                    <img loading="lazy" width="100" height="100" src="https://stg-cdn.sktuniverse.co.kr/m/image/details/img-div-more.png" alt="">
+                                </div>
+                                <div class="product-title">
+                                    <div class="txt-title">
+                                        <div class="txt">추가 상품</div>
+                                        <span class="txt-sub tooltip-container tooltip-white">
+                                            <span class="inner">
+                                                <span>기본 상품과 함께 구독할 수 있어요</span>
+                                            </span>
+                                            <span class="ico ico-info-stroke tooltip-btn" id="toolTip" style="display:none"></span>
+                                            <div class="tooltip">
+                                                <span class="tooltip-inner">{{asl.basBnfPrdCnt}}개까지 기본 선택이며, 추가 선택 시 {{currencyComma asl.addStrdAmt}}원이 추가됩니다.</span>
+                                            </div>                                                    
+                                        </span>
+                                    </div>
+                                </div>
+                                {{#each asl.pList as |pl|}}
+                                    <div class="col thumb-col">
+                                        <div class="com-product-thumb-hor-1">
+                                            <span class="thumb-product thumb-product-xs">
+                                                <span class="thumb-product-img">
+                                                    <img loading="lazy" width="100" height="100" src="{{getApiCdn pl.img}}" alt="{{pl.bnfDesc}}">
+                                                </span>
+                                            </span>
+                                            <span class="info-product-hor">
+                                                <span class="txt-name">{{pl.bnfDesc}}</span>
+                                            </span>
+                                            <a href="/product/detail/slot?prdId={{pl.compPrdId}}" class="inner-link"></a>
+                                        </div>
+                                    </div>
+                                {{/each}}                                    
+                            {{/ifCond}}
+                            <!--// (N개 표기 X)-->
+                        {{/if}}
+                    {{/with}}
+                    <!--// 추가상품 영역-->
+
+                    <!-- 추천 상품 영역-->
+                    {{#ifCond 'B01,B02,C03,C04' 'indexOf' pd.prdType}}                            
+                        <div class="cut-bg" style="display:none">
+                            <img loading="lazy" width="100" height="100" src="https://stg-cdn.sktuniverse.co.kr/m/image/details/img-tap.png" alt="">
+                        </div>
+                        <div class="product-wrap-inner ai-pick" id="aiPickTtlNm" style="display:none">
+                            <div class="row row-ai">
+                                <span class="ico ico-ai"></span>
+                                <span class="row txt-sub">
+                                    <span>고객님께 추천하는 상품</span>
+                                </span>
+                            </div>
+                            <div class="col" id="aiPickList">                            
+                            </div>
+                        </div>                            
+                    {{/ifCond}}
+                    <!--// 추천 상품 영역-->
+                </div>
+            </div>
+        </div>        
+    {{/with}}
+{{/ifCond}}
+
+{{#if data.bannerInfo}}
+<!-- 마케팅/콘텐츠배너 -->
+<div id="maketingBanner">
+    {{#each data.bannerInfo.bnrList as |rl index|}}
+        {{#ifCond index '===' 0}}
+            {{#ifCond rl.useClCd '===' 'Y'}}
+            <a class="banner-detail-contents" id="bannerDetailContents" href="javascript:void(0);" pgtypcd="{{rl.pgTypCd}}" lndUrl="{{rl.bnrLnkUrl}}">
+                <img src="{{getApiCdn rl.bnrImgFileUrl}}" alt="{{rl.pgTypCd}}">
+            </a>
+            {{/ifCond}}
+        {{/ifCond}}
+    {{/each}}            
+</div>
+<!--// 마케팅/콘텐츠배너 -->
+{{/if}}
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 		<header>
 			<p>웹뷰 브릿지 API 테스트</p>
 		</header>
